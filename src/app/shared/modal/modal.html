@@ -1,0 +1,46 @@
+<!-- Overlay -->
+<div
+  class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+  (click)="fecharModal()">
+
+  <!-- Modal -->
+  <div
+    class="bg-white w-full max-w-xl rounded-2xl shadow-2xl p-6 relative animate-scale"
+    (click)="$event.stopPropagation()">
+
+    <!-- Botão Fechar -->
+    <button
+      (click)="fecharModal()"
+      class="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-xl">
+      ✕
+    </button>
+
+    <!-- Título -->
+    <h2 class="text-2xl font-bold text-green-700 mb-4">
+      {{ receita.nome }}
+    </h2>
+
+    <!-- Conteúdo -->
+    <div class="space-y-4 text-gray-700">
+
+      <div>
+        <h3 class="font-semibold text-green-600">🌿 Ingredientes</h3>
+        <p class="mt-1">{{ receita.ingredientes }}</p>
+      </div>
+
+      <div>
+        <h3 class="font-semibold text-green-600">🫖 Modo de Preparo</h3>
+        <p class="mt-1">{{ receita.preparo }}</p>
+      </div>
+
+    </div>
+
+    <!-- Botão -->
+    <button
+      (click)="fecharModal()"
+      class="mt-6 w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl transition">
+      Fechar Receita
+    </button>
+
+  </div>
+</div>

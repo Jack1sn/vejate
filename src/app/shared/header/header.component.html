@@ -1,0 +1,83 @@
+<header
+  class="fixed top-0 left-0 w-full z-50 transition-all duration-300"
+  [ngClass]="{'bg-white shadow-md': scrolled, 'bg-green-700': !scrolled}"
+>
+  <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+
+    <!-- Logo -->
+    <a routerLink="/home"
+       class="text-2xl font-bold"
+       [ngClass]="{'text-green-700': scrolled, 'text-white': !scrolled}">
+      🌿 VEJATE
+    </a>
+
+    <!-- Desktop Menu -->
+    <nav class="hidden md:flex gap-6 items-center">
+
+      <!-- Sempre Home -->
+      <a routerLink="/home"
+         class="hover:text-green-300"
+         [ngClass]="{'text-gray-800': scrolled, 'text-white': !scrolled}">
+        Home
+      </a>
+
+      <!-- Menu para quem NÃO está logado -->
+      <ng-container *ngIf="!estaLogado()">
+        <a routerLink="/login"
+           class="hover:text-green-300"
+           [ngClass]="{'text-gray-800': scrolled, 'text-white': !scrolled}">
+          Login
+        </a>
+        <a routerLink="/register"
+           class="hover:text-green-300"
+           [ngClass]="{'text-gray-800': scrolled, 'text-white': !scrolled}">
+          Registrar
+        </a>
+      </ng-container>
+
+      <!-- Menu para quem está logado -->
+      <ng-container *ngIf="estaLogado()">
+        <a routerLink="/cliente"
+           class="hover:text-green-300"
+           [ngClass]="{'text-gray-800': scrolled, 'text-white': !scrolled}">
+          Cliente
+        </a>
+        <a *ngIf="ehAdmin()" routerLink="/admin"
+           class="hover:text-green-300"
+           [ngClass]="{'text-gray-800': scrolled, 'text-white': !scrolled}">
+          Admin
+        </a>
+        <button (click)="logout()"
+                class="bg-red-500 text-white px-3 py-1 rounded">
+          Sair
+        </button>
+      </ng-container>
+    </nav>
+
+    <!-- Mobile Toggle Button -->
+    <button class="md:hidden text-2xl"
+            [ngClass]="{'text-green-700': scrolled, 'text-white': !scrolled}"
+            (click)="toggleMenu()">
+      ☰
+    </button>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div *ngIf="menuAberto" class="md:hidden bg-white shadow-md px-6 py-4 space-y-3">
+
+    <a routerLink="/home" (click)="toggleMenu()" class="block">Home</a>
+
+    <!-- Não logado -->
+    <ng-container *ngIf="!estaLogado()">
+      <a routerLink="/login" (click)="toggleMenu()" class="block">Login</a>
+      <a routerLink="/register" (click)="toggleMenu()" class="block">Registrar</a>
+    </ng-container>
+
+    <!-- Logado -->
+    <ng-container *ngIf="estaLogado()">
+      <a routerLink="/cliente" (click)="toggleMenu()" class="block">Cliente</a>
+      <a *ngIf="ehAdmin()" routerLink="/admin" (click)="toggleMenu()" class="block">Admin</a>
+      <button (click)="logout()" class="text-red-600 block">Sair</button>
+    </ng-container>
+  </div>
+</header>
