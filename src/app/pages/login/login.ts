@@ -1,11 +1,45 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-login',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   templateUrl: './login.html',
-  styleUrl: './login.css',
+  styleUrls: ['./login.css']
 })
-export class Login {
+export class LoginComponent {
 
+  private auth = inject(AuthService);
+  private router = inject(Router);
+
+  email = '';
+  senha = '';
+  erro = '';
+
+  login() {
+    this.erro = '';
+
+    // Tenta autenticar com o AuthService
+    const sucesso = this.auth.login(this.email, this.senha);
+
+    if (sucesso) {
+      // Pega o usuário logado
+      const usuario = this.auth.getUsuario();
+
+      if (!usuario) return;
+
+      // Redireciona conforme role
+      if (usuario.role === 'admin') {
+        this.router.navigate(['/admin']);
+      } else if (usuario.role === 'cliente') {
+        this.router.navigate(['/cliente']);
+      }
+    } else {
+      this.erro = 'Email ou senha inválidos.';
+    }
+  }
 }

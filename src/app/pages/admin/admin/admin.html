@@ -1,0 +1,79 @@
+<div class="min-h-screen bg-gray-100 pt-28 flex">
+
+  <!-- SIDEBAR -->
+  <aside class="w-64 bg-green-700 text-white p-6 hidden md:block">
+    <h2 class="text-2xl font-bold mb-8">🌿 Admin</h2>
+    <nav class="space-y-4">
+      <button (click)="setView('dashboard')" class="w-full text-left hover:bg-green-600 p-2 rounded transition">📊 Dashboard</button>
+      <button (click)="setView('receitas')" class="w-full text-left hover:bg-green-600 p-2 rounded transition">📋 Receitas</button>
+      <button (click)="logout()" class="w-full text-left bg-red-500 hover:bg-red-600 p-2 rounded transition mt-6">🚪 Sair</button>
+    </nav>
+  </aside>
+
+  <!-- CONTENT -->
+  <main class="flex-1 p-8">
+
+    <!-- DASHBOARD -->
+    <div *ngIf="view() === 'dashboard'">
+      <h1 class="text-3xl font-bold text-green-700 mb-6">Painel Administrativo</h1>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="bg-white p-6 rounded-xl shadow">
+          <p class="text-gray-500 text-sm">Total de Receitas</p>
+          <h3 class="text-2xl font-bold text-green-700">{{ totalReceitas() }}</h3>
+        </div>
+        <div class="bg-white p-6 rounded-xl shadow">
+          <p class="text-gray-500 text-sm">Usuários Ativos</p>
+          <h3 class="text-2xl font-bold text-green-700">12</h3>
+        </div>
+        <div class="bg-white p-6 rounded-xl shadow">
+          <p class="text-gray-500 text-sm">Categorias</p>
+          <h3 class="text-2xl font-bold text-green-700">5</h3>
+        </div>
+      </div>
+    </div>
+
+    <!-- RECEITAS CRUD -->
+    <div *ngIf="view() === 'receitas'" class="space-y-6">
+
+      <!-- FORMULÁRIO DE RECEITA -->
+      <div class="bg-white p-6 rounded-xl shadow-lg">
+        <h2 class="text-xl font-semibold text-green-700 mb-4">{{ editId !== null ? 'Editar Receita' : 'Nova Receita' }}</h2>
+
+        <input type="text" placeholder="Título" [(ngModel)]="titulo" class="w-full mb-3 px-4 py-2 border rounded" />
+        <textarea placeholder="Descrição" [(ngModel)]="descricao" class="w-full mb-3 px-4 py-2 border rounded"></textarea>
+        <select [(ngModel)]="categoria" class="w-full mb-4 px-4 py-2 border rounded">
+          <option value="Imunidade">Imunidade</option>
+          <option value="Calmante">Calmante</option>
+          <option value="Foco">Foco</option>
+          <option value="Digestão">Digestão</option>
+          <option value="Dor">Dor</option>
+        </select>
+
+        <div class="flex gap-2">
+          <button (click)="salvar()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">
+            {{ editId !== null ? 'Atualizar' : 'Salvar' }}
+          </button>
+          <button *ngIf="editId !== null" (click)="cancelar()" class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500 transition">Cancelar</button>
+        </div>
+      </div>
+
+      <!-- LISTA DE RECEITAS -->
+      <div class="bg-white p-6 rounded-xl shadow-lg">
+        <h2 class="text-xl font-semibold text-green-700 mb-4">Receitas Criadas</h2>
+        <div *ngFor="let r of receitas()" class="flex justify-between items-center border-b py-3">
+          <div>
+            <p class="font-semibold">{{ r.titulo }}</p>
+            <p class="text-sm text-gray-500">{{ r.categoria }}</p>
+          </div>
+          <div class="flex gap-2">
+            <button (click)="editar(r)" class="text-blue-600 hover:text-blue-800">Editar</button>
+            <button (click)="remover(r.id)" class="text-red-500 hover:text-red-700">Excluir</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+</div>

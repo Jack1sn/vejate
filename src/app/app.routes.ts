@@ -19,18 +19,18 @@ export const routes: Routes = [
     path: 'admin',
     canActivate: [authGuard],
     loadComponent: () =>
-      import('./pages/admin/admin').then(m => m.AdminComponent)
+      import('./pages/admin/admin/admin').then(m => m.AdminComponent)
   },
   {
     path: 'cliente',
     canActivate: [authGuard],
     loadComponent: () =>
-      import('./pages/cliente/cliente').then(m => m.ClienteComponent)
+      import('./pages/cliente/cliente/cliente').then(m => m.ClienteComponent)
   },
   {
     path: 'login',
     loadComponent: () =>
-      import('./pages/login/login').then(m => m.Login)
+      import('./pages/login/login').then(m => m.LoginComponent)
   },
   {
     path: 'register',

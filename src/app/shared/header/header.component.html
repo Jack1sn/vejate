@@ -1,83 +1,137 @@
 <header
   class="fixed top-0 left-0 w-full z-50 transition-all duration-300"
-  [ngClass]="{'bg-white shadow-md': scrolled, 'bg-green-700': !scrolled}"
+  [ngClass]="{'bg-white shadow-md': scrolled, 'bg-green-700 text-white': !scrolled}"
 >
+
   <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
 
     <!-- Logo -->
     <a routerLink="/home"
-       class="text-2xl font-bold"
+       class="text-2xl font-bold tracking-wide"
        [ngClass]="{'text-green-700': scrolled, 'text-white': !scrolled}">
       🌿 VEJATE
     </a>
 
     <!-- Desktop Menu -->
-    <nav class="hidden md:flex gap-6 items-center">
+    <nav class="hidden md:flex items-center gap-8">
 
-      <!-- Sempre Home -->
+      <!-- Home -->
       <a routerLink="/home"
-         class="hover:text-green-300"
+         class="hover:text-green-300 transition"
          [ngClass]="{'text-gray-800': scrolled, 'text-white': !scrolled}">
         Home
       </a>
 
-      <!-- Menu para quem NÃO está logado -->
-      <ng-container *ngIf="!estaLogado()">
-        <a routerLink="/login"
-           class="hover:text-green-300"
-           [ngClass]="{'text-gray-800': scrolled, 'text-white': !scrolled}">
-          Login
-        </a>
-        <a routerLink="/register"
-           class="hover:text-green-300"
-           [ngClass]="{'text-gray-800': scrolled, 'text-white': !scrolled}">
-          Registrar
-        </a>
-      </ng-container>
+      <!-- Categorias diretas (Palavras únicas) -->
+      <a routerLink="/categoria/imunidade"
+         class="hover:text-green-300 transition"
+         [ngClass]="{'text-gray-800': scrolled, 'text-white': !scrolled}">
+        Imunidade
+      </a>
 
-      <!-- Menu para quem está logado -->
+      <a routerLink="/categoria/calmantes-sono"
+         class="hover:text-green-300 transition"
+         [ngClass]="{'text-gray-800': scrolled, 'text-white': !scrolled}">
+        Calmante
+      </a>
+
+      <a routerLink="/categoria/energia-foco"
+         class="hover:text-green-300 transition"
+         [ngClass]="{'text-gray-800': scrolled, 'text-white': !scrolled}">
+        Foco
+      </a>
+
+      <a routerLink="/categoria/digestao"
+         class="hover:text-green-300 transition"
+         [ngClass]="{'text-gray-800': scrolled, 'text-white': !scrolled}">
+        Digestão
+      </a>
+
+      <a routerLink="/categoria/alivio-dores"
+         class="hover:text-green-300 transition"
+         [ngClass]="{'text-gray-800': scrolled, 'text-white': !scrolled}">
+        Dor
+      </a>
+
+      <!-- Barra de Busca -->
+      <div class="relative">
+        <input
+          type="text"
+          placeholder="Buscar remédio..."
+          [(ngModel)]="termoBusca"
+          (keyup.enter)="buscar()"
+          class="px-4 py-2 rounded-full border focus:outline-none focus:ring-2 focus:ring-green-500 w-56 text-sm"
+        />
+
+        <button
+          (click)="buscar()"
+          class="absolute right-3 top-2 text-green-600">
+          🔍
+        </button>
+      </div>
+
+      <!-- Notificações -->
+      <div class="relative cursor-pointer"
+           [ngClass]="{'text-gray-800': scrolled, 'text-white': !scrolled}">
+        🔔
+        <span *ngIf="notificacoes().length"
+              class="absolute -top-2 -right-3 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
+          {{ notificacoes().length }}
+        </span>
+      </div>
+
+      <!-- Auth -->
+     <ng-container *ngIf="!estaLogado()">
+
+  <!-- Login -->
+  <a routerLink="/login"
+     class="hover:text-green-300 transition"
+     [ngClass]="{'text-gray-800': scrolled, 'text-white': !scrolled}">
+    Login
+  </a>
+
+  <!-- Register -->
+  <a routerLink="/register"
+     class="ml-2 px-4 py-2 rounded-full font-medium transition"
+     [ngClass]="scrolled 
+        ? 'bg-green-600 text-white hover:bg-green-700' 
+        : 'bg-white text-green-700 hover:bg-green-100'">
+    Register
+  </a>
+
+</ng-container>
+
+
       <ng-container *ngIf="estaLogado()">
+
         <a routerLink="/cliente"
-           class="hover:text-green-300"
+           class="hover:text-green-300 transition"
            [ngClass]="{'text-gray-800': scrolled, 'text-white': !scrolled}">
           Cliente
         </a>
-        <a *ngIf="ehAdmin()" routerLink="/admin"
-           class="hover:text-green-300"
-           [ngClass]="{'text-gray-800': scrolled, 'text-white': !scrolled}">
-          Admin
+
+        <a *ngIf="ehAdmin()"
+           routerLink="/admin"
+           class="bg-green-600 text-white px-4 py-2 rounded-full hover:bg-green-700 transition">
+          Painel
         </a>
+
         <button (click)="logout()"
-                class="bg-red-500 text-white px-3 py-1 rounded">
+                class="bg-red-500 text-white px-3 py-1 rounded-full hover:bg-red-600 transition">
           Sair
         </button>
+
       </ng-container>
+
     </nav>
 
-    <!-- Mobile Toggle Button -->
+    <!-- Mobile Toggle -->
     <button class="md:hidden text-2xl"
             [ngClass]="{'text-green-700': scrolled, 'text-white': !scrolled}"
             (click)="toggleMenu()">
       ☰
     </button>
+
   </div>
 
-  <!-- Mobile Menu -->
-  <div *ngIf="menuAberto" class="md:hidden bg-white shadow-md px-6 py-4 space-y-3">
-
-    <a routerLink="/home" (click)="toggleMenu()" class="block">Home</a>
-
-    <!-- Não logado -->
-    <ng-container *ngIf="!estaLogado()">
-      <a routerLink="/login" (click)="toggleMenu()" class="block">Login</a>
-      <a routerLink="/register" (click)="toggleMenu()" class="block">Registrar</a>
-    </ng-container>
-
-    <!-- Logado -->
-    <ng-container *ngIf="estaLogado()">
-      <a routerLink="/cliente" (click)="toggleMenu()" class="block">Cliente</a>
-      <a *ngIf="ehAdmin()" routerLink="/admin" (click)="toggleMenu()" class="block">Admin</a>
-      <button (click)="logout()" class="text-red-600 block">Sair</button>
-    </ng-container>
-  </div>
 </header>
