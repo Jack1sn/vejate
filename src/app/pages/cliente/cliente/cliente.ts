@@ -1,6 +1,7 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReceitaService } from '../../../services/receita.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-cliente',
@@ -15,20 +16,22 @@ import { ReceitaService } from '../../../services/receita.service';
 
       <div class="grid md:grid-cols-3 gap-6">
 
-        <div *ngFor="let r of receitas()"
+        <div *ngFor="let r of receitasFiltradas()"
              class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
 
-          <h2 class="text-lg font-bold text-green-700">
-            {{ r.titulo }}
-          </h2>
+          <h2 class="text-lg font-bold text-green-700 mb-2">{{ r.titulo }}</h2>
+          <p class="text-gray-600 text-sm mb-1">Categoria: {{ r.categoria }}</p>
+          <p class="text-gray-700 mb-2">{{ r.descricao }}</p>
 
-          <p class="text-gray-600 text-sm mb-2">
-            {{ r.categoria }}
-          </p>
-
-          <p class="text-gray-700">
-            {{ r.descricao }}
-          </p>
+          <div class="mt-2 p-3 bg-gray-50 border rounded text-gray-800 text-sm">
+            <strong>Modo de preparo:</strong>
+            <ul class="list-decimal list-inside space-y-1 mt-1">
+              <li *ngFor="let etapa of r.modoPreparo">
+                <span *ngIf="etapa.medida"><strong>{{ etapa.medida }} - </strong></span>
+                {{ etapa.descricao }}
+              </li>
+            </ul>
+          </div>
 
         </div>
 
@@ -40,6 +43,22 @@ import { ReceitaService } from '../../../services/receita.service';
 export class ClienteComponent {
 
   private receitaService = inject(ReceitaService);
+  private route = inject(ActivatedRoute);
 
-  receitas = this.receitaService.receitas;
+  private categoriaParam = signal<string | null>(null);
+
+  // Receitas filtradas dinamicamente
+  receitasFiltradas = computed(() => {
+    const categoria = this.categoriaParam();
+    const todas = this.receitaService.receitas();
+    if (!categoria) return todas;
+    return todas.filter(r => r.categoria.toLowerCase() === categoria.toLowerCase());
+  });
+
+  constructor() {
+    // Escuta mudanças no parâmetro da rota
+    this.route.params.subscribe(params => {
+      this.categoriaParam.set(params['categoria'] || null);
+    });
+  }
 }

@@ -11,7 +11,7 @@ export const routes: Routes = [
         pathMatch:'full'
     },
   {
-    path: '',
+    path: 'home',
     loadComponent: () =>
       import('./pages/home/home.component').then(m => m.HomeComponent)
   },
@@ -22,7 +22,7 @@ export const routes: Routes = [
       import('./pages/admin/admin/admin').then(m => m.AdminComponent)
   },
   {
-    path: 'cliente',
+    path: 'categoria/:categoria',
     canActivate: [authGuard],
     loadComponent: () =>
       import('./pages/cliente/cliente/cliente').then(m => m.ClienteComponent)
@@ -37,6 +37,38 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./pages/register/register').then(m => m.Register)
   },
+
+  {
+  path: 'categoria/foco',
+  loadComponent: () =>
+    import('./pages/categoria/foco/foco.component')
+      .then(m => m.FocoComponent)
+},
+{
+  path: 'categoria/imunidade',
+  loadComponent: () =>
+    import('./pages/categoria/imunidade/imunidade')
+      .then(m => m.ImunidadeComponent)
+},
+{
+  path: 'categoria/digestao',
+  loadComponent: () =>
+    import('./pages/categoria/digestao/digestao')
+      .then(m => m.DigestaoComponent)
+},
+{
+  path: 'categoria/dor',
+  loadComponent: () =>
+    import('./pages/categoria/dor/dor')
+      .then(m => m.DorComponent)
+},
+{
+  path: 'categoria/calmante',
+  loadComponent: () =>
+    import('./pages/categoria/calmante/calmante')
+      .then(m => m.CalmanteComponent)
+},
+
    {  path:'**',
     redirectTo: 'home'}
 ];

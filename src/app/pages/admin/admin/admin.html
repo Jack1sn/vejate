@@ -35,27 +35,59 @@
     <!-- RECEITAS CRUD -->
     <div *ngIf="view() === 'receitas'" class="space-y-6">
 
-      <!-- FORMULÁRIO DE RECEITA -->
-      <div class="bg-white p-6 rounded-xl shadow-lg">
-        <h2 class="text-xl font-semibold text-green-700 mb-4">{{ editId !== null ? 'Editar Receita' : 'Nova Receita' }}</h2>
+     <!-- FORMULÁRIO DE RECEITA -->
+<div class="bg-white p-6 rounded-xl shadow-lg">
+  <h2 class="text-xl font-semibold text-green-700 mb-4">
+    {{ editId !== null ? 'Editar Receita' : 'Nova Receita' }}
+  </h2>
 
-        <input type="text" placeholder="Título" [(ngModel)]="titulo" class="w-full mb-3 px-4 py-2 border rounded" />
-        <textarea placeholder="Descrição" [(ngModel)]="descricao" class="w-full mb-3 px-4 py-2 border rounded"></textarea>
-        <select [(ngModel)]="categoria" class="w-full mb-4 px-4 py-2 border rounded">
-          <option value="Imunidade">Imunidade</option>
-          <option value="Calmante">Calmante</option>
-          <option value="Foco">Foco</option>
-          <option value="Digestão">Digestão</option>
-          <option value="Dor">Dor</option>
-        </select>
+  <!-- Título -->
+  <input type="text" placeholder="Título" [(ngModel)]="titulo" class="w-full mb-3 px-4 py-2 border rounded" />
 
-        <div class="flex gap-2">
-          <button (click)="salvar()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">
-            {{ editId !== null ? 'Atualizar' : 'Salvar' }}
-          </button>
-          <button *ngIf="editId !== null" (click)="cancelar()" class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500 transition">Cancelar</button>
-        </div>
-      </div>
+  <!-- Descrição -->
+  <textarea placeholder="Descrição" [(ngModel)]="descricao" class="w-full mb-3 px-4 py-2 border rounded"></textarea>
+
+  <!-- Categoria -->
+  <select [(ngModel)]="categoria" class="w-full mb-4 px-4 py-2 border rounded">
+    <option value="">Selecione a categoria</option>
+    <option value="Imunidade">Imunidade</option>
+    <option value="Calmante">Calmante</option>
+    <option value="Foco">Foco</option>
+    <option value="Digestão">Digestão</option>
+    <option value="Dor">Dor</option>
+  </select>
+
+  <!-- Modo de Preparo -->
+  <div class="mb-4">
+    <h3 class="font-semibold text-green-700 mb-2">Modo de Preparo</h3>
+
+    <input placeholder="Descrição da etapa" [(ngModel)]="etapaDescricao" class="w-full mb-2 px-3 py-2 border rounded" />
+    <input placeholder="Medida (opcional)" [(ngModel)]="etapaMedida" class="w-full mb-2 px-3 py-2 border rounded" />
+
+    <button (click)="adicionarEtapa()" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition mb-2">
+      Adicionar Etapa
+    </button>
+
+    <ul class="list-decimal list-inside space-y-1">
+      <li *ngFor="let e of modoPreparo; let i = index" class="flex justify-between items-center">
+        <span>
+          <strong *ngIf="e.medida">{{ e.medida }} - </strong>{{ e.descricao }}
+        </span>
+        <button (click)="removerEtapa(i)" class="text-red-500 hover:text-red-700 text-sm font-bold ml-2">✕</button>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Botões Salvar e Cancelar -->
+  <div class="flex gap-2">
+    <button (click)="salvar()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">
+      {{ editId !== null ? 'Atualizar' : 'Salvar' }}
+    </button>
+    <button *ngIf="editId !== null" (click)="cancelar()" class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500 transition">Cancelar</button>
+  </div>
+
+</div>
+
 
       <!-- LISTA DE RECEITAS -->
       <div class="bg-white p-6 rounded-xl shadow-lg">
