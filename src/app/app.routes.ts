@@ -69,6 +69,31 @@ export const routes: Routes = [
       .then(m => m.CalmanteComponent)
 },
 
+{
+  path: 'registro',
+  loadComponent: () =>
+    import('./pages/registro/registro')
+      .then(m => m.RegistroComponent)
+}
+,
+
+{
+  path: 'doar',
+  loadComponent: () =>
+    import('./pages/doar/doar')
+      .then(m => m.DoarComponent)
+},
+{
+  path: 'privacidade',
+  loadComponent: () => import('./pages/privacidade/privacidade')
+    .then(m => m.PrivacidadeComponent)
+},
+
+{
+  path: 'termos',
+  loadComponent: () => import('./pages/termos/termos')
+    .then(m => m.TermosComponent)
+},
    {  path:'**',
     redirectTo: 'home'}
 ];

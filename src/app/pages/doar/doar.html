@@ -1,0 +1,78 @@
+<div class="flex items-center justify-center min-h-screen bg-gray-100 px-4 py-6">
+
+  <div class="bg-white p-10 md:p-10 rounded-xl shadow-xl max-w-lg w-full">
+
+    <!-- Título -->
+    <h2 class="text-2xl md:text-1xl font-bold text-green-700 mb-4 mt-4 md:mb-6 text-center">
+       Apoie o projeto VEJATE
+    </h2>
+
+    <p class="text-gray-600 text-center mb-6 md:mb-8 text-sm md:text-base">
+      Você pode doar qualquer valor em  qualquer lugar do mundo.
+    </p>
+
+    <!-- PIX Brasil -->
+    <div class="border rounded-lg p-4 md:p-6 mb-6">
+      <h3 class="font-semibold text-base md:text-lg mb-3"> Doação  com pix</h3>
+      
+
+      <div class="flex flex-col md:flex-row items-center md:items-start justify-between gap-4">
+        <!-- Chave PIX -->
+        <div class="flex-1 flex flex-col gap-2">
+          <div class="flex items-center justify-between bg-gray-100 px-3 py-2 rounded">
+            <span class="font-mono text-sm">{{ pixChave }}</span>
+            <button (click)="copiarPix()"
+                    class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 transition text-sm">
+              Copiar
+            </button>
+          </div>
+          <p *ngIf="pixCopiado" class="text-green-600 text-sm">
+            ✅ Chave PIX copiada!
+          </p>
+        </div>
+
+        <!-- QR Code -->
+        <div class="flex-shrink-0 mt-3 md:mt-0">
+          <img [src]="'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=PIX:'+pixChave"
+               alt="QR Code PIX"
+               class="rounded shadow w-32 h-32 md:w-36 md:h-36"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- Internacional -->
+    <div class="border rounded-lg p-4 md:p-6 mb-6">
+      <p class="text-gray-500 text-sm md:text-base mb-3">
+        Outros tipos de doações, utilize PayPal ou Cartão de Crédito (Visa/Mastercard).
+      </p>
+
+      <div class="flex flex-col sm:flex-row gap-2 mb-3">
+        <input type="number" [(ngModel)]="valorDoacao"
+               class="flex-1 px-3 py-2 border rounded text-sm"
+               placeholder="Valor">
+        <select [(ngModel)]="moeda" class="px-3 py-2 border rounded text-sm">
+          <option value="USD">USD</option>
+          <option value="EUR">EUR</option>
+          <option value="BRL">BRL</option>
+        </select>
+      </div>
+
+      <div class="flex flex-col md:flex-row gap-2">
+        <button (click)="doarPayPal()"
+                class="flex-1 bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition text-sm">
+          Doar com PayPal
+        </button>
+        <button (click)="doarStripe()"
+                class="flex-1 bg-purple-600 text-white py-2 rounded hover:bg-purple-700 transition text-sm">
+          Doar com Cartão (Visa/Mastercard)
+        </button>
+      </div>
+    </div>
+
+    <!-- Rodapé -->
+    <div class="mt-4 md:mt-6 text-center text-sm text-gray-500">
+      Obrigado por apoiar o projeto  VEJATE❤️
+    </div>
+
+  </div>
+</div>

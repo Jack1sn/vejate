@@ -1,44 +1,14 @@
 import { Component, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { ReceitaService } from '../../../services/receita.service';
-import { ActivatedRoute } from '@angular/router';
+import { FooterComponent } from '../../footer/footer';
 
 @Component({
   selector: 'app-cliente',
   standalone: true,
-  imports: [CommonModule],
-  template: `
-    <div class="min-h-screen bg-gray-100 pt-28 px-8">
-
-      <h1 class="text-3xl font-bold text-green-700 mb-8">
-        🌿 Receitas Naturais
-      </h1>
-
-      <div class="grid md:grid-cols-3 gap-6">
-
-        <div *ngFor="let r of receitasFiltradas()"
-             class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
-
-          <h2 class="text-lg font-bold text-green-700 mb-2">{{ r.titulo }}</h2>
-          <p class="text-gray-600 text-sm mb-1">Categoria: {{ r.categoria }}</p>
-          <p class="text-gray-700 mb-2">{{ r.descricao }}</p>
-
-          <div class="mt-2 p-3 bg-gray-50 border rounded text-gray-800 text-sm">
-            <strong>Modo de preparo:</strong>
-            <ul class="list-decimal list-inside space-y-1 mt-1">
-              <li *ngFor="let etapa of r.modoPreparo">
-                <span *ngIf="etapa.medida"><strong>{{ etapa.medida }} - </strong></span>
-                {{ etapa.descricao }}
-              </li>
-            </ul>
-          </div>
-
-        </div>
-
-      </div>
-
-    </div>
-  `
+  imports: [CommonModule,RouterModule, FooterComponent],
+  templateUrl: './cliente.html'
 })
 export class ClienteComponent {
 
@@ -47,16 +17,19 @@ export class ClienteComponent {
 
   private categoriaParam = signal<string | null>(null);
 
-  // Receitas filtradas dinamicamente
+  // Computed para filtrar receitas dinamicamente
   receitasFiltradas = computed(() => {
     const categoria = this.categoriaParam();
     const todas = this.receitaService.receitas();
+
     if (!categoria) return todas;
-    return todas.filter(r => r.categoria.toLowerCase() === categoria.toLowerCase());
+
+    return todas.filter(r =>
+      r.categoria.toLowerCase() === categoria.toLowerCase()
+    );
   });
 
   constructor() {
-    // Escuta mudanças no parâmetro da rota
     this.route.params.subscribe(params => {
       this.categoriaParam.set(params['categoria'] || null);
     });

@@ -1,0 +1,57 @@
+<footer class="bg-green-700 text-white mt-12">
+  <div class="max-w-7xl mx-auto px-6 py-10 flex flex-col md:flex-row md:justify-between gap-6">
+
+    <!-- Direitos reservados -->
+    <p class="text-gray-100 text-sm md:text-base text-center md:text-left font-light">
+      © 2026 VEJATE. Todos os direitos reservados.
+    </p>
+
+    <!-- Links legais -->
+    <div class="flex gap-4 text-sm md:text-base text-center md:text-left">
+      <a routerLink="/termos"
+         routerLinkActive="text-green-300 underline"
+         class="hover:text-green-300 transition font-medium">
+        Termos de Uso
+      </a>
+
+      <a routerLink="/privacidade"
+         routerLinkActive="text-green-300 underline"
+         class="hover:text-green-300 transition font-medium">
+        Política de Privacidade
+      </a>
+    </div>
+
+    <!-- Contato -->
+    <p class="text-gray-100 text-sm md:text-base text-center font-light">
+      Contato:
+      <a href="mailto:pix@vejate.com"
+         class="hover:text-green-300 transition font-medium">
+        pix@vejate.com
+      </a>
+    </p>
+
+    <!-- Redes sociais -->
+    <div class="flex flex-col items-center md:items-end gap-2">
+      <span class="font-semibold text-sm md:text-base"></span>
+      <div class="flex gap-4 text-xl">
+        <a *ngFor="let rede of redesSociais"
+           [href]="rede.url"
+           target="_blank"
+           rel="noopener"
+           class="transition transform hover:scale-110 hover:text-green-300"
+           [title]="rede.nome">
+          <i [class]="rede.iconClass"></i>
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Back to Top -->
+  <button
+    *ngIf="scrollTopVisible"
+    (click)="scrollToTop()"
+    class="fixed bottom-6 right-6 bg-green-600 text-white p-3 rounded-full shadow-lg hover:bg-green-700 transition z-50">
+    ↑
+  </button>
+</footer>
