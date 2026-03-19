@@ -43,11 +43,28 @@ export class HeaderComponent {
   termoBusca = '';
 
 buscar() {
-  if (this.termoBusca.trim()) {
-    this.router.navigate(['/buscar'], {
-      queryParams: { q: this.termoBusca }
+  if (!this.termoBusca?.trim()) return;
+
+  // Normaliza o texto
+  const termo = this.termoBusca
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim();
+
+  const palavras = termo.split(' ');
+
+  // Se tiver mais de uma palavra → busca específica
+  if (palavras.length > 1) {
+    this.router.navigate(['/busca'], {
+      queryParams: { termo: termo, tipo: 'especifico' }
     });
+  } else {
+    // Palavra única → busca geral
+    this.router.navigate(['/categoria', termo]);
   }
+
+  this.termoBusca = '';
 }
 
 }
