@@ -8,6 +8,7 @@ import { CalmanteComponent } from './pages/categoria/calmante/calmante';
 import { ClienteComponent } from './pages/cliente/cliente/cliente';
 import { AdminComponent } from './pages/admin/admin/admin';
 import { DoarComponent } from './pages/doar/doar';
+import { DorComponent } from './pages/categoria/dor/dor';
 
 export const routes: Routes = [
   // Página inicial
@@ -18,6 +19,8 @@ export const routes: Routes = [
 
   // Login
   { path: 'login', component: LoginComponent },
+
+  { path: 'dor', component: DorComponent },
 
   // Register
   { path: 'registro', component: RegistroComponent }, // <-- nova rota

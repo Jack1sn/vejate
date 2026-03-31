@@ -19,10 +19,11 @@ export class DorComponent {
   termoAtual = '';
 
   constructor() {
+    // ⚡ Efeito que atualiza o componente quando os sinais mudam
     effect(() => {
-      this.resultados = this.buscaService.resultados();
-      this.historico = this.buscaService.historico();
-      this.termoAtual = this.buscaService.ultimoTermo();
+      this.resultados = this.buscaService.resultados(); // sinal readonly
+      this.historico = this.buscaService.historico();   // sinal readonly
+      this.termoAtual = this.buscaService.ultimoTermo(); // método do service
     });
   }
 }
