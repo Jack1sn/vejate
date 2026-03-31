@@ -1,22 +1,25 @@
 import { Component, HostListener, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, Router,  } from '@angular/router';
-import { AuthService } from '../../services/auth.service';
+import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../services/auth.service';
 import { NotificacaoService } from '../../services/notificacao.service';
-
+import { ReceitaService, Receita } from '../../services/receita.service';
+import { BuscaService } from '../../services/busca.service';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, RouterModule,FormsModule],
-  templateUrl: './header.component.html'
+  imports: [CommonModule, RouterModule, FormsModule],
+  templateUrl: './header.component.html',
 })
 export class HeaderComponent {
 
   private auth = inject(AuthService);
   private router = inject(Router);
-  private  notificacaoservice = inject(NotificacaoService);
+  private notificacaoService = inject(NotificacaoService);
+  private receitaService = inject(ReceitaService);
+  private buscaService = inject(BuscaService);
 
   menuAberto = false;
   scrolled = false;
@@ -24,7 +27,10 @@ export class HeaderComponent {
   usuario = this.auth.usuario;
   estaLogado = this.auth.estaLogado;
   ehAdmin = this.auth.ehAdmin;
-  notificacoes = this.notificacaoservice.notificacoes
+  notificacoes = this.notificacaoService.notificacoes;
+
+  termoBusca = '';
+  resultadosDropdown: Receita[] = [];
 
   toggleMenu() {
     this.menuAberto = !this.menuAberto;
@@ -40,31 +46,41 @@ export class HeaderComponent {
     this.scrolled = window.scrollY > 20;
   }
 
-  termoBusca = '';
+  // Sugestões enquanto digita
+  filtrarReceitas() {
+    const termo = this.termoBusca?.trim();
+    if (!termo) {
+      this.resultadosDropdown = [];
+      return;
+    }
 
-buscar() {
-  if (!this.termoBusca?.trim()) return;
+    const termoNorm = termo.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 
-  // Normaliza o texto
-  const termo = this.termoBusca
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .trim();
-
-  const palavras = termo.split(' ');
-
-  // Se tiver mais de uma palavra → busca específica
-  if (palavras.length > 1) {
-    this.router.navigate(['/cliente'], {
-      queryParams: { termo: termo, tipo: 'especifico' }
-    });
-  } else {
-    // Palavra única → busca geral
-    this.router.navigate(['/categoria', termo]);
+    this.resultadosDropdown = this.receitaService.receitas().filter(r =>
+      r.titulo.toLowerCase().includes(termoNorm) ||
+      r.descricao.toLowerCase().includes(termoNorm) ||
+      r.categoria.toLowerCase().includes(termoNorm) ||
+      (r.doencas && r.doencas.some(d => d.toLowerCase().includes(termoNorm)))
+    );
   }
 
-  this.termoBusca = '';
-}
+  // Pesquisa completa
+  buscar() {
+    const termo = this.termoBusca?.trim();
+    if (!termo) return;
 
+    this.buscaService.pesquisar(termo);
+
+    this.termoBusca = '';
+    this.resultadosDropdown = [];
+
+    this.router.navigate(['/dor']);
+  }
+
+  selecionarReceita(r: Receita) {
+    this.buscaService.pesquisar(r.titulo);
+    this.router.navigate(['/dor']);
+    this.termoBusca = '';
+    this.resultadosDropdown = [];
+  }
 }

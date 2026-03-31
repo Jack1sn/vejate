@@ -1,0 +1,113 @@
+[
+  {
+    "id": 1,
+    "titulo": "Chá de Gengibre",
+    "descricao": "Fortalece a imunidade e ajuda na digestão",
+    "categoria": "Imunidade",
+    "doencas": ["gripe", "resfriado"],
+    "modoPreparo": [
+      { "medida": "2 fatias", "descricao": "Corte o gengibre em fatias finas" },
+      { "medida": "200 ml", "descricao": "Ferva água e adicione o gengibre" },
+      { "descricao": "Deixe repousar por 10 minutos antes de coar" }
+    ]
+  },
+  {
+    "id": 2,
+    "titulo": "Chá de Camomila",
+    "descricao": "Ajuda a relaxar e melhorar o sono",
+    "categoria": "Calmante",
+    "modoPreparo": [
+      { "medida": "1 colher de sopa", "descricao": "Coloque flores de camomila em água quente" },
+      { "descricao": "Deixe em infusão por 5 minutos e coe" }
+    ]
+  },
+  {
+    "id": 3,
+    "titulo": "Chá de Alecrim",
+    "descricao": "Melhora a concentração e foco mental",
+    "categoria": "Foco",
+    "modoPreparo": [
+      { "medida": "1 colher de chá", "descricao": "Adicione folhas de alecrim em água quente" },
+      { "descricao": "Deixe descansar 5 minutos e coe" }
+    ]
+  },
+  {
+    "id": 4,
+    "titulo": "Suco Detox de Couve",
+    "descricao": "Auxilia na digestão e desintoxicação",
+    "categoria": "Digestão",
+    "modoPreparo": [
+      { "medida": "2 folhas", "descricao": "Adicione couve lavada" },
+      { "medida": "1/2 limão", "descricao": "Esprema no liquidificador" },
+      { "medida": "1 copo", "descricao": "Adicione água" },
+      { "descricao": "Bata até ficar homogêneo" }
+    ]
+  },
+  {
+    "id": 5,
+    "titulo": "Xarope de Mel e Limão",
+    "descricao": "Alivia dor de garganta e tosse",
+    "categoria": "Dor",
+    "doencas": ["garganta", "tosse"],
+    "modoPreparo": [
+      { "medida": "2 colheres de sopa", "descricao": "Misture mel e suco de limão" },
+      { "descricao": "Tome 2 a 3 vezes ao dia" }
+    ]
+  },
+  {
+    "id": 6,
+    "titulo": "Infusão de Hortelã",
+    "descricao": "Ajuda na digestão e alivia desconfortos estomacais",
+    "categoria": "Digestão",
+    "modoPreparo": [
+      { "medida": "5 folhas", "descricao": "Coloque folhas de hortelã em água quente" },
+      { "descricao": "Deixe descansar por 5 minutos" },
+      { "descricao": "Coe e sirva" }
+    ]
+  },
+  {
+    "id": 7,
+    "titulo": "Chá de Erva-cidreira",
+    "descricao": "Acalma e reduz ansiedade",
+    "categoria": "Calmante",
+    "modoPreparo": [
+      { "medida": "1 colher de sopa", "descricao": "Coloque folhas de erva-cidreira em água quente" },
+      { "descricao": "Deixe em infusão por 5 minutos e coe" }
+    ]
+  },
+  {
+    "id": 8,
+    "titulo": "Infusão de Gengibre e Limão",
+    "descricao": "Estimula a imunidade e ajuda na digestão",
+    "categoria": "Imunidade",
+    "doencas": ["resfriado", "gripe"],
+    "modoPreparo": [
+      { "medida": "2 fatias", "descricao": "Corte o gengibre em fatias finas" },
+      { "medida": "1/2 limão", "descricao": "Esprema o suco" },
+      { "medida": "200 ml", "descricao": "Água quente" },
+      { "descricao": "Misture tudo e deixe descansar por 5 minutos" }
+    ]
+  },
+  {
+    "id": 9,
+    "titulo": "Chá de Canela e Cravo",
+    "descricao": "Alivia dores leves e inflamações",
+    "categoria": "Dor",
+    "modoPreparo": [
+      { "medida": "1 pau", "descricao": "Adicione canela em água fervente" },
+      { "medida": "3 cravos", "descricao": "Acrescente na água" },
+      { "descricao": "Ferva 5 minutos e coe" }
+    ]
+  },
+  {
+    "id": 10,
+    "titulo": "Suco de Cenoura com Laranja",
+    "descricao": "Rico em vitaminas, melhora foco e energia",
+    "categoria": "Foco",
+    "modoPreparo": [
+      { "medida": "2 unidades", "descricao": "Cenouras descascadas" },
+      { "medida": "1 unidade", "descricao": "Laranja espremida" },
+      { "descricao": "Bata no liquidificador com água e sirva" }
+    ]
+  }
+]
