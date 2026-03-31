@@ -7,7 +7,7 @@ import { FooterComponent } from '../../footer/footer';
 @Component({
   selector: 'app-cliente',
   standalone: true,
-  imports: [CommonModule,RouterModule, FooterComponent],
+  imports: [CommonModule, RouterModule, FooterComponent],
   templateUrl: './cliente.html'
 })
 export class ClienteComponent {
@@ -16,22 +16,47 @@ export class ClienteComponent {
   private route = inject(ActivatedRoute);
 
   private categoriaParam = signal<string | null>(null);
+  private buscaParam = signal<string | null>(null); // 🔥 NOVO
 
-  // Computed para filtrar receitas dinamicamente
   receitasFiltradas = computed(() => {
     const categoria = this.categoriaParam();
+    const busca = this.buscaParam()?.toLowerCase();
     const todas = this.receitaService.receitas();
 
-    if (!categoria) return todas;
+    return todas.filter(r => {
 
-    return todas.filter(r =>
-      r.categoria.toLowerCase() === categoria.toLowerCase()
-    );
+      // filtro categoria
+      const matchCategoria = categoria
+        ? r.categoria.toLowerCase() === categoria.toLowerCase()
+        : true;
+
+      // filtro busca
+      const matchBusca = busca
+        ? (
+            r.titulo.toLowerCase().includes(busca) ||
+            r.descricao.toLowerCase().includes(busca) ||
+            r.categoria.toLowerCase().includes(busca) ||
+            r.doencas?.some((d: string) =>
+              busca.includes(d.toLowerCase()) ||
+              d.toLowerCase().includes(busca)
+            )
+          )
+        : true;
+
+      return matchCategoria && matchBusca;
+    });
   });
 
   constructor() {
+
+    // categoria (/categoria/imunidade)
     this.route.params.subscribe(params => {
       this.categoriaParam.set(params['categoria'] || null);
+    });
+
+    // 🔥 busca (?busca=gripe)
+    this.route.queryParams.subscribe(query => {
+      this.buscaParam.set(query['busca'] || null);
     });
   }
 }
