@@ -10,6 +10,7 @@ export interface Receita {
   titulo: string;
   descricao: string;
   categoria: string;
+  doencas?: string [];
   modoPreparo: EtapaPreparo[];
 }
 
@@ -27,6 +28,7 @@ export class ReceitaService {
       titulo: 'Chá de Gengibre',
       descricao: 'Fortalece a imunidade',
       categoria: 'Imunidade',
+       doencas: ['gripe', 'resfriado'],
       modoPreparo: [
         { medida: '2 fatias', descricao: 'Corte o gengibre em fatias finas' },
         { medida: '200 ml', descricao: 'Ferva água e adicione o gengibre' },

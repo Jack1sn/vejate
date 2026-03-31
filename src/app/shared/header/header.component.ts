@@ -56,7 +56,7 @@ buscar() {
 
   // Se tiver mais de uma palavra → busca específica
   if (palavras.length > 1) {
-    this.router.navigate(['/busca'], {
+    this.router.navigate(['/cliente'], {
       queryParams: { termo: termo, tipo: 'especifico' }
     });
   } else {
