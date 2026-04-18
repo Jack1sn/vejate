@@ -1,66 +1,89 @@
-<div class="min-h-screen bg-gray-100 pt-24 px-4 sm:px-6 lg:px-8">
+<div class="min-h-screen bg-gray-50 pt-24 px-4 sm:px-6 lg:px-8">
 
-  <!-- HERO / INTRO -->
-  <section class="text-center mb-10 sm:mb-12">
-    <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-green-700 mb-4 tracking-tight">
+  <!-- HERO -->
+  <section class="text-center mb-14 sm:mb-16">
+
+    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-green-700 mb-4 tracking-tight">
       🌿 VEJATE
     </h1>
 
-    <p class="text-gray-700 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
-      Bem-vindo ao VEJATE! Aqui você encontra receitas naturais organizadas por categoria
-      para fortalecer a imunidade, auxiliar no sono, melhorar a digestão, foco e muito mais.
+    <p class="text-gray-600 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
+      Descubra receitas naturais organizadas por categoria para melhorar sua saúde,
+      bem-estar e qualidade de vida de forma simples e prática.
     </p>
+
   </section>
 
   <!-- SOBRE -->
-  <section class="bg-white p-4 sm:p-6 md:p-8 rounded-xl shadow-lg mb-10 sm:mb-12 max-w-4xl mx-auto">
-    
-    <h2 class="text-xl sm:text-2xl font-semibold text-green-700 mb-4">
+  <section class="bg-white p-6 sm:p-8 md:p-10 rounded-2xl shadow-md mb-14 max-w-5xl mx-auto border border-gray-100">
+
+    <h2 class="text-2xl sm:text-3xl font-bold text-green-700 mb-6">
       Sobre o VEJATE
     </h2>
 
-    <div class="space-y-3 text-gray-700 leading-relaxed text-sm sm:text-base">
+    <div class="space-y-5 text-gray-700 leading-relaxed text-sm sm:text-base">
+
       <p>
-        O VEJATE é uma plataforma criada para compartilhar receitas naturais de forma segura e confiável.
-        Todas as informações aqui são destinadas apenas para fins informativos e educativos.
+        O VEJATE é uma plataforma dedicada a compartilhar receitas naturais de forma segura, organizada e acessível.
+        Todo o conteúdo é educativo e não substitui orientação profissional.
       </p>
 
       <p>
-        Nosso objetivo é que você, cliente, encontre facilmente receitas que ajudam no seu bem-estar,
-        filtrando por categorias específicas como:
+        Nosso objetivo é facilitar sua busca por soluções naturais através de categorias específicas:
       </p>
 
-      <!-- TAGS RESPONSIVAS -->
-      <div class="flex flex-wrap gap-2 mt-2">
-        <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs sm:text-sm">Imunidade</span>
-        <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs sm:text-sm">Calmante</span>
-        <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs sm:text-sm">Foco</span>
-        <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs sm:text-sm">Digestão</span>
-        <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs sm:text-sm">Dor</span>
+      <!-- TAGS MELHORADAS -->
+      <div class="flex flex-wrap gap-2 pt-2">
+
+        <span class="bg-green-100 text-green-700 px-4 py-1 rounded-full text-xs sm:text-sm font-medium">
+          Imunidade
+        </span>
+
+        <span class="bg-green-100 text-green-700 px-4 py-1 rounded-full text-xs sm:text-sm font-medium">
+          Calmante
+        </span>
+
+        <span class="bg-green-100 text-green-700 px-4 py-1 rounded-full text-xs sm:text-sm font-medium">
+          Foco
+        </span>
+
+        <span class="bg-green-100 text-green-700 px-4 py-1 rounded-full text-xs sm:text-sm font-medium">
+          Digestão
+        </span>
+
+        <span class="bg-green-100 text-green-700 px-4 py-1 rounded-full text-xs sm:text-sm font-medium">
+          Dor
+        </span>
+
       </div>
 
-      <p class="font-semibold text-yellow-700 mt-4">
-        ⚠️ Atenção: As receitas são informativas e não substituem orientação médica.
-      </p>
+      <div class="mt-6 p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded-lg">
+        <p class="text-yellow-700 font-medium">
+          ⚠️ Aviso: As receitas têm caráter informativo e não substituem aconselhamento médico.
+        </p>
+      </div>
+
     </div>
 
   </section>
 
-  <!-- CALL TO ACTION -->
-  <section class="text-center max-w-2xl mx-auto">
-    <h3 class="text-lg sm:text-xl font-semibold text-gray-800 mb-3">
-      Explore as receitas agora
+  <!-- CTA -->
+  <section class="text-center max-w-3xl mx-auto">
+
+    <h3 class="text-xl sm:text-2xl font-bold text-gray-800 mb-3">
+      Comece a explorar agora
     </h3>
 
-    <p class="text-gray-600 text-sm sm:text-base mb-5">
-      Navegue pelas categorias e descubra soluções naturais para o seu dia a dia.
+    <p class="text-gray-600 text-sm sm:text-base mb-8">
+      Encontre rapidamente receitas naturais para o que você precisa no momento.
     </p>
 
     <a routerLink="/categoria/imunidade"
-       class="inline-block bg-green-600 text-white px-6 py-3 rounded-full font-medium 
-              hover:bg-green-700 transition duration-300 shadow-md">
-      Começar agora
+       class="inline-block bg-green-600 text-white px-8 py-3 rounded-full font-semibold
+              hover:bg-green-700 hover:shadow-lg transition-all duration-300">
+      Explorar receitas
     </a>
+
   </section>
 
 </div>

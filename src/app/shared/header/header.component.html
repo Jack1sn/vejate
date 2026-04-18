@@ -5,20 +5,22 @@
     'bg-green-700 text-white': !scrolled
   }"
 >
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex justify-between items-center">
 
     <!-- Logo -->
-    <a routerLink="/home"
-       class="text-xl sm:text-2xl font-bold"
-       [ngClass]="{
-         'text-green-700': scrolled,
-         'text-white': !scrolled
-       }">
+    <a
+      routerLink="/home"
+      class="text-lg sm:text-xl md:text-2xl font-bold flex items-center gap-2"
+      [ngClass]="{
+        'text-green-700': scrolled,
+        'text-white': !scrolled
+      }"
+    >
       🌿 VEJATE
     </a>
 
     <!-- Desktop -->
-    <nav class="hidden md:flex items-center gap-6">
+    <nav class="hidden md:flex items-center gap-5 lg:gap-6 text-sm lg:text-base">
 
       <a routerLink="/home" class="hover:text-green-400">Home</a>
       <a routerLink="/categoria/imunidade">Imunidade</a>
@@ -27,19 +29,11 @@
       <a routerLink="/categoria/digestao">Digestão</a>
       <a routerLink="/categoria/dor">Dor</a>
 
-      <!-- Busca -->
-      <div class="relative">
-        <input
-          type="text"
-          placeholder="Buscar..."
-          [(ngModel)]="termoBusca"
-          class="w-32 sm:w-40 md:w-52 px-3 py-2 rounded-full border text-sm text-black"
-        />
-      </div>
-
       <!-- Botão -->
-      <a routerLink="/doar"
-         class="bg-green-600 text-white px-4 py-2 rounded-full hover:bg-green-700">
+      <a
+        routerLink="/doar"
+        class="bg-green-600 text-white px-4 py-2 rounded-full hover:bg-green-700 transition"
+      >
         Doar
       </a>
 
@@ -53,8 +47,10 @@
   </div>
 
   <!-- MOBILE MENU -->
-  <div *ngIf="menuAberto"
-       class="md:hidden bg-white px-4 py-4 space-y-4 shadow-md">
+  <div
+    *ngIf="menuAberto"
+    class="md:hidden bg-white px-5 py-5 space-y-4 shadow-md text-black"
+  >
 
     <a routerLink="/home" (click)="toggleMenu()">Home</a>
     <a routerLink="/categoria/imunidade" (click)="toggleMenu()">Imunidade</a>
@@ -63,18 +59,13 @@
     <a routerLink="/categoria/digestao" (click)="toggleMenu()">Digestão</a>
     <a routerLink="/categoria/dor" (click)="toggleMenu()">Dor</a>
 
-    <input
-      type="text"
-      placeholder="Buscar..."
-      [(ngModel)]="termoBusca"
-      class="w-full px-4 py-2 border rounded-lg"
-    />
-
-    <button
-      (click)="buscar()"
-      class="w-full bg-green-600 text-white py-2 rounded-lg">
-      Buscar
-    </button>
+    <a
+      routerLink="/doar"
+      (click)="toggleMenu()"
+      class="block text-center bg-green-600 text-white py-2 rounded-lg"
+    >
+      Doar
+    </a>
 
   </div>
 </header>
