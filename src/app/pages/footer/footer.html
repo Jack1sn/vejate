@@ -1,57 +1,116 @@
-<footer class="bg-green-700 text-white mt-12">
-  <div class="max-w-7xl mx-auto px-6 py-10 flex flex-col md:flex-row md:justify-between gap-6">
+<footer class="bg-green-700 text-white mt-12 relative">
 
-    <!-- Direitos reservados -->
-    <p class="text-gray-100 text-sm md:text-base text-center md:text-left font-light">
-      © 2026 VEJATE. Todos os direitos reservados.
-    </p>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
 
-    <!-- Links legais -->
-    <div class="flex gap-4 text-sm md:text-base text-center md:text-left">
-      <a routerLink="/termos"
-         routerLinkActive="text-green-300 underline"
-         class="hover:text-green-300 transition font-medium">
-        Termos de Uso
-      </a>
+    <!-- GRID PRINCIPAL -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
 
-      <a routerLink="/privacidade"
-         routerLinkActive="text-green-300 underline"
-         class="hover:text-green-300 transition font-medium">
-        Política de Privacidade
-      </a>
+      <!-- LOGO / DESCRIÇÃO -->
+      <div>
+        <h2 class="text-xl font-bold mb-3">🌿 VEJATE</h2>
+        <p class="text-green-100 text-sm leading-relaxed">
+          Plataforma de receitas naturais para melhorar seu bem-estar de forma simples e acessível.
+        </p>
+      </div>
+
+      <!-- LINKS -->
+      <div>
+        <h3 class="font-semibold mb-3 text-sm uppercase tracking-wide text-green-200">
+          Navegação
+        </h3>
+
+        <ul class="space-y-2 text-sm">
+          <li><a routerLink="/home" class="hover:text-green-300 transition">Home</a></li>
+          <li><a routerLink="/categoria/imunidade" class="hover:text-green-300">Imunidade</a></li>
+          <li><a routerLink="/categoria/calmante" class="hover:text-green-300">Calmante</a></li>
+          <li><a routerLink="/categoria/foco" class="hover:text-green-300">Foco</a></li>
+        </ul>
+      </div>
+
+      <!-- LEGAL -->
+      <div>
+        <h3 class="font-semibold mb-3 text-sm uppercase tracking-wide text-green-200">
+          Legal
+        </h3>
+
+        <ul class="space-y-2 text-sm">
+          <li>
+            <a routerLink="/termos"
+               routerLinkActive="underline text-green-300"
+               class="hover:text-green-300 transition">
+              Termos de Uso
+            </a>
+          </li>
+          <li>
+            <a routerLink="/privacidade"
+               routerLinkActive="underline text-green-300"
+               class="hover:text-green-300 transition">
+              Política de Privacidade
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- CONTATO + REDES -->
+      <div class="flex flex-col gap-4">
+
+        <div>
+          <h3 class="font-semibold mb-2 text-sm uppercase tracking-wide text-green-200">
+            Contato
+          </h3>
+
+          <p class="text-sm text-green-100">
+            <a href="mailto:pix@vejate.com"
+               class="hover:text-green-300 transition font-medium">
+              pix@vejate.com
+            </a>
+          </p>
+        </div>
+
+        <div>
+          <h3 class="font-semibold mb-2 text-sm uppercase tracking-wide text-green-200">
+            Redes
+          </h3>
+
+          <div class="flex gap-4 text-xl">
+            <a *ngFor="let rede of redesSociais"
+               [href]="rede.url"
+               target="_blank"
+               rel="noopener"
+               class="transition transform hover:scale-110 hover:text-green-300"
+               [title]="rede.nome">
+              <i [class]="rede.iconClass"></i>
+            </a>
+          </div>
+        </div>
+
+      </div>
+
     </div>
 
-    <!-- Contato -->
-    <p class="text-gray-100 text-sm md:text-base text-center font-light">
-      Contato:
-      <a href="mailto:pix@vejate.com"
-         class="hover:text-green-300 transition font-medium">
-        pix@vejate.com
-      </a>
-    </p>
+    <!-- DIVISOR -->
+    <div class="border-t border-green-600 mt-8 pt-6 flex flex-col sm:flex-row justify-between items-center gap-4">
 
-    <!-- Redes sociais -->
-    <div class="flex flex-col items-center md:items-end gap-2">
-      <span class="font-semibold text-sm md:text-base"></span>
-      <div class="flex gap-4 text-xl">
-        <a *ngFor="let rede of redesSociais"
-           [href]="rede.url"
-           target="_blank"
-           rel="noopener"
-           class="transition transform hover:scale-110 hover:text-green-300"
-           [title]="rede.nome">
-          <i [class]="rede.iconClass"></i>
-        </a>
-      </div>
+      <p class="text-green-100 text-sm text-center sm:text-left">
+        © 2026 VEJATE. Todos os direitos reservados.
+      </p>
+
+      <p class="text-green-200 text-xs text-center sm:text-right">
+        Feito para promover saúde e bem-estar 🌿
+      </p>
+
     </div>
 
   </div>
 
-  <!-- Back to Top -->
+  <!-- BOTÃO VOLTAR AO TOPO -->
   <button
     *ngIf="scrollTopVisible"
     (click)="scrollToTop()"
-    class="fixed bottom-6 right-6 bg-green-600 text-white p-3 rounded-full shadow-lg hover:bg-green-700 transition z-50">
+    class="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 
+           bg-green-600 text-white p-3 rounded-full shadow-lg 
+           hover:bg-green-700 transition duration-300 z-50">
     ↑
   </button>
+
 </footer>
