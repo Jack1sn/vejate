@@ -8,9 +8,44 @@
     </h1>
 
     <p class="text-gray-600 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
-      Descubra receitas naturais organizadas por categoria para melhorar sua saúde,
-      bem-estar e qualidade de vida de forma simples e prática.
+      Encontre receitas naturais para melhorar sua saúde e bem-estar de forma simples e organizada.
     </p>
+
+  </section>
+
+  <!-- BUSCA PRINCIPAL -->
+  <section class="mb-14">
+
+    <div class="max-w-3xl mx-auto text-center mb-6">
+      <h2 class="text-xl sm:text-2xl font-semibold text-gray-800">
+        O que você está buscando hoje?
+      </h2>
+      <p class="text-gray-500 text-sm sm:text-base mt-2">
+        Digite um sintoma ou objetivo (ex: ansiedade, imunidade, dor...)
+      </p>
+    </div>
+
+    <div class="flex flex-col sm:flex-row gap-3 justify-center items-stretch max-w-2xl mx-auto">
+
+      <input
+        type="text"
+        placeholder="Buscar receitas naturais..."
+        [(ngModel)]="termoBusca"
+        (keyup.enter)="buscar()"
+        class="w-full sm:w-[450px] md:w-[520px] lg:w-[600px]
+               px-5 py-3 rounded-full border
+               focus:outline-none focus:ring-2 focus:ring-green-500 shadow-sm"
+      />
+
+      <button
+        (click)="buscar()"
+        class="bg-green-600 text-white px-6 py-3 rounded-full
+               hover:bg-green-700 transition shadow-md w-full sm:w-auto"
+      >
+        Buscar
+      </button>
+
+    </div>
 
   </section>
 
@@ -24,15 +59,14 @@
     <div class="space-y-5 text-gray-700 leading-relaxed text-sm sm:text-base">
 
       <p>
-        O VEJATE é uma plataforma dedicada a compartilhar receitas naturais de forma segura, organizada e acessível.
-        Todo o conteúdo é educativo e não substitui orientação profissional.
+        O VEJATE é uma plataforma criada para compartilhar receitas naturais de forma segura, organizada e educativa.
       </p>
 
       <p>
-        Nosso objetivo é facilitar sua busca por soluções naturais através de categorias específicas:
+        Você pode explorar conteúdos por categorias específicas para facilitar sua busca.
       </p>
 
-      <!-- TAGS MELHORADAS -->
+      <!-- TAGS -->
       <div class="flex flex-wrap gap-2 pt-2">
 
         <span class="bg-green-100 text-green-700 px-4 py-1 rounded-full text-xs sm:text-sm font-medium">
@@ -59,7 +93,7 @@
 
       <div class="mt-6 p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded-lg">
         <p class="text-yellow-700 font-medium">
-          ⚠️ Aviso: As receitas têm caráter informativo e não substituem aconselhamento médico.
+          ⚠️ As receitas são informativas e não substituem orientação médica.
         </p>
       </div>
 
@@ -67,21 +101,64 @@
 
   </section>
 
-  <!-- CTA -->
+  <!-- CATEGORIAS CTA -->
+  <section class="text-center max-w-5xl mx-auto mb-14">
+
+    <h3 class="text-xl sm:text-2xl font-bold text-gray-800 mb-8">
+      Explore por categoria
+    </h3>
+
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+
+      <a routerLink="/categoria/imunidade"
+         class="bg-white p-4 rounded-xl shadow hover:shadow-md transition border">
+        🛡️<br>
+        <span class="text-sm font-medium">Imunidade</span>
+      </a>
+
+      <a routerLink="/categoria/calmante"
+         class="bg-white p-4 rounded-xl shadow hover:shadow-md transition border">
+        😌<br>
+        <span class="text-sm font-medium">Calmante</span>
+      </a>
+
+      <a routerLink="/categoria/foco"
+         class="bg-white p-4 rounded-xl shadow hover:shadow-md transition border">
+        🧠<br>
+        <span class="text-sm font-medium">Foco</span>
+      </a>
+
+      <a routerLink="/categoria/digestao"
+         class="bg-white p-4 rounded-xl shadow hover:shadow-md transition border">
+        🌿<br>
+        <span class="text-sm font-medium">Digestão</span>
+      </a>
+
+      <a routerLink="/categoria/dor"
+         class="bg-white p-4 rounded-xl shadow hover:shadow-md transition border">
+        💊<br>
+        <span class="text-sm font-medium">Dor</span>
+      </a>
+
+    </div>
+
+  </section>
+
+  <!-- CTA FINAL -->
   <section class="text-center max-w-3xl mx-auto">
 
     <h3 class="text-xl sm:text-2xl font-bold text-gray-800 mb-3">
-      Comece a explorar agora
+      Comece agora
     </h3>
 
     <p class="text-gray-600 text-sm sm:text-base mb-8">
-      Encontre rapidamente receitas naturais para o que você precisa no momento.
+      Use a busca ou explore categorias para encontrar o que você precisa.
     </p>
 
     <a routerLink="/categoria/imunidade"
        class="inline-block bg-green-600 text-white px-8 py-3 rounded-full font-semibold
-              hover:bg-green-700 hover:shadow-lg transition-all duration-300">
-      Explorar receitas
+              hover:bg-green-700 hover:shadow-lg transition">
+      Explorar agora
     </a>
 
   </section>
