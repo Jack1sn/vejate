@@ -3,6 +3,7 @@ import { Injectable, signal, computed } from '@angular/core';
 export interface Usuario {
   email: string;
   senha: string;
+  saldo: number;
   role: 'admin' | 'cliente';
 }
 
@@ -23,17 +24,26 @@ export class AuthService {
   ehAdmin = computed(() => this.usuarioSignal()?.role === 'admin');
 
   constructor() {
-    // Inicializa a lista de usuários cadastrados com admin e cliente padrão
     const usuarios = this.getUsuariosCadastrados();
 
     // Admin padrão
     if (!usuarios.find(u => u.email === 'admin@vejate.com')) {
-      this.salvarUsuario({ email: 'admin@vejate.com', senha: '123', role: 'admin' });
+      this.salvarUsuario({
+        email: 'admin@vejate.com',
+        senha: '123',
+        role: 'admin',
+        saldo: 0
+      });
     }
 
     // Cliente padrão
     if (!usuarios.find(u => u.email === 'cliente@vejate.com')) {
-      this.salvarUsuario({ email: 'cliente@vejate.com', senha: '123', role: 'cliente' });
+      this.salvarUsuario({
+        email: 'cliente@vejate.com',
+        senha: '123',
+        role: 'cliente',
+        saldo: 0
+      });
     }
   }
 
@@ -42,11 +52,22 @@ export class AuthService {
    */
   login(email: string, senha: string): boolean {
     const usuarios = this.getUsuariosCadastrados();
-    const usuario = usuarios.find(u => u.email === email && u.senha === senha);
+
+    const usuario = usuarios.find(
+      u => u.email === email && u.senha === senha
+    );
+
     if (!usuario) return false;
 
-    this.usuarioSignal.set(usuario);
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(usuario));
+    // garante integridade (evita usuário antigo sem saldo)
+    const usuarioSeguro: Usuario = {
+      ...usuario,
+      saldo: usuario.saldo ?? 0
+    };
+
+    this.usuarioSignal.set(usuarioSeguro);
+    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(usuarioSeguro));
+
     return true;
   }
 
@@ -65,10 +86,16 @@ export class AuthService {
     const usuarios = this.getUsuariosCadastrados();
 
     if (usuarios.find(u => u.email === email)) {
-      return false; // email já existe
+      return false;
     }
 
-    const novoUsuario: Usuario = { email, senha, role: 'cliente' };
+    const novoUsuario: Usuario = {
+      email,
+      senha,
+      role: 'cliente',
+      saldo: 0
+    };
+
     this.salvarUsuario(novoUsuario);
     return true;
   }
@@ -78,7 +105,20 @@ export class AuthService {
    */
   private getUsuarioFromStorage(): Usuario | null {
     const data = localStorage.getItem(this.STORAGE_KEY);
-    return data ? JSON.parse(data) : null;
+
+    if (!data) return null;
+
+    try {
+      const user = JSON.parse(data);
+
+      // garante compatibilidade com versões antigas
+      return {
+        ...user,
+        saldo: user.saldo ?? 0
+      };
+    } catch {
+      return null;
+    }
   }
 
   /**
@@ -104,5 +144,4 @@ export class AuthService {
   getUsuario(): Usuario | null {
     return this.usuarioSignal();
   }
-
 }

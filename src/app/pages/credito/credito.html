@@ -1,0 +1,73 @@
+<div class="p-6 max-w-2xl mx-auto">
+
+  <h1 class="text-2xl font-bold mb-6 text-center flex items-center justify-center gap-3">
+
+  <span>🌍 Recargas Internacionais</span>
+
+  <div class="flex gap-1 text-2xl">
+    {{ getBandeira('DO') }}
+    {{ getBandeira('HT') }}
+    {{ getBandeira('CU') }}
+    {{ getBandeira('VE') }}
+  </div>
+
+</h1>
+  
+
+
+  <!-- Número -->
+  <div class="flex items-center border rounded p-2 mb-2">
+
+  <span class="text-xl mr-2">
+    {{ getBandeira(paisDetectado) }}
+  </span>
+
+  <input
+    type="text"
+    [(ngModel)]="numero"
+    (input)="validarNumero()"
+    placeholder="+18095551234"
+    class="w-full outline-none"
+  />
+
+</div>
+
+  <div *ngIf="numeroValido" class="text-green-600 text-sm mb-4">
+    ✅ Número válido ({{ paisDetectado }})
+  </div>
+
+  <div *ngIf="!numeroValido && numero" class="text-red-500 text-sm mb-4">
+    ❌ Número inválido (use formato +XXX)
+  </div>
+
+  <!-- País detectado -->
+ <div *ngIf="paisAtual" class="mb-4 text-sm flex items-center gap-2">
+  
+  <span class="text-2xl">
+    {{ getBandeira(paisAtual.codigo) }}
+  </span>
+
+  <span>
+    <strong>{{ paisAtual.nome }}</strong>
+  </span>
+
+</div>
+
+  <!-- Valores -->
+  <div class="grid grid-cols-3 gap-3">
+
+    <button
+      *ngFor="let v of valores"
+      (click)="pagar(v)"
+      class="border rounded-lg p-4 hover:bg-green-50"
+    >
+      <div class="font-bold">R$ {{ v }}</div>
+
+      <div class="text-xs text-gray-500 mt-1">
+        ≈ {{ converter(v) }} {{ paisAtual?.moeda }}
+      </div>
+    </button>
+
+  </div>
+
+</div>

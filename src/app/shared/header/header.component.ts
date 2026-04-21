@@ -6,11 +6,12 @@ import { AuthService } from '../../services/auth.service';
 import { NotificacaoService } from '../../services/notificacao.service';
 import { ReceitaService, Receita } from '../../services/receita.service';
 import { BuscaService } from '../../services/busca.service';
+import { CreditoComponent } from "../../pages/credito/credito";
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, CreditoComponent],
   templateUrl: './header.component.html',
 })
 export class HeaderComponent {
@@ -83,4 +84,21 @@ export class HeaderComponent {
     this.termoBusca = '';
     this.resultadosDropdown = [];
   }
+
+
+  //----
+  recargaAberta = false;
+
+toggleRecarga() {
+  this.recargaAberta = !this.recargaAberta;
+}
+
+abrirRecargaMobile() {
+  this.recargaAberta = true;
+  this.menuAberto = false;
+}
+
+fecharRecarga() {
+  this.recargaAberta = false;
+}
 }
