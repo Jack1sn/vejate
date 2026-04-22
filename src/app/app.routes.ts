@@ -9,6 +9,8 @@ import { ClienteComponent } from './pages/cliente/cliente/cliente';
 import { AdminComponent } from './pages/admin/admin/admin';
 import { DoarComponent } from './pages/doar/doar';
 import { DorComponent } from './pages/categoria/dor/dor';
+import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard';
+import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   // Página inicial
@@ -33,6 +35,13 @@ export const routes: Routes = [
 
   // Painel admin
   { path: 'admin', component: AdminComponent },
+
+  {
+  path: 'admin/dashboard',
+  component: AdminDashboardComponent,
+  canActivate: [authGuard],
+   data: { role: 'admin' }
+},
 
   // Doação
   { path: 'doar', component: DoarComponent },

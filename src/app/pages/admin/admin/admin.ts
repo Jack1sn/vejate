@@ -18,7 +18,7 @@ export class AdminComponent {
   private receitaService = inject(ReceitaService);
 
   // View atual: dashboard ou receitas
-  view = signal<'dashboard' | 'receitas'>('dashboard');
+  view = signal<'dashboard' | 'receitas' | 'admin/dashboard'>('dashboard');
 
   // Form fields
   titulo = '';
@@ -36,7 +36,7 @@ export class AdminComponent {
   totalReceitas = computed(() => this.receitas().length);
 
   // Alterna view
-  setView(tipo: 'dashboard' | 'receitas') {
+  setView(tipo: 'dashboard' | 'receitas' | 'admin/dashboard') {
     this.view.set(tipo);
   }
 

@@ -1,6 +1,7 @@
 import { Injectable, signal, computed } from '@angular/core';
 
 export interface Usuario {
+  nome: string;
   email: string;
   senha: string;
   saldo: number;
@@ -15,13 +16,18 @@ export class AuthService {
   private readonly STORAGE_KEY = 'vejate_user';
   private readonly STORAGE_USERS = 'vejate_users';
 
-  // Signal reativo para o usuário logado
   private usuarioSignal = signal<Usuario | null>(this.getUsuarioFromStorage());
 
-  // Computed helpers
+  // 🔥 Computeds
   usuario = computed(() => this.usuarioSignal());
   estaLogado = computed(() => !!this.usuarioSignal());
   ehAdmin = computed(() => this.usuarioSignal()?.role === 'admin');
+
+  nomeUsuario = computed(() => {
+    const user = this.usuarioSignal();
+    if (!user) return '';
+    return user.nome?.split(' ')[0] || user.email.split('@')[0];
+  });
 
   constructor() {
     const usuarios = this.getUsuariosCadastrados();
@@ -29,6 +35,7 @@ export class AuthService {
     // Admin padrão
     if (!usuarios.find(u => u.email === 'admin@vejate.com')) {
       this.salvarUsuario({
+        nome: 'Administrador',
         email: 'admin@vejate.com',
         senha: '123',
         role: 'admin',
@@ -39,10 +46,11 @@ export class AuthService {
     // Cliente padrão
     if (!usuarios.find(u => u.email === 'cliente@vejate.com')) {
       this.salvarUsuario({
+        nome: 'Cliente Teste',
         email: 'cliente@vejate.com',
         senha: '123',
         role: 'cliente',
-        saldo: 0
+        saldo: 50
       });
     }
   }
@@ -59,9 +67,9 @@ export class AuthService {
 
     if (!usuario) return false;
 
-    // garante integridade (evita usuário antigo sem saldo)
     const usuarioSeguro: Usuario = {
       ...usuario,
+      nome: usuario.nome ?? email.split('@')[0],
       saldo: usuario.saldo ?? 0
     };
 
@@ -80,9 +88,9 @@ export class AuthService {
   }
 
   /**
-   * 📝 Cadastro de novo cliente
+   * 📝 Cadastro
    */
-  cadastrarCliente(email: string, senha: string): boolean {
+  cadastrarCliente(nome: string, email: string, senha: string): boolean {
     const usuarios = this.getUsuariosCadastrados();
 
     if (usuarios.find(u => u.email === email)) {
@@ -90,6 +98,7 @@ export class AuthService {
     }
 
     const novoUsuario: Usuario = {
+      nome,
       email,
       senha,
       role: 'cliente',
@@ -98,6 +107,68 @@ export class AuthService {
 
     this.salvarUsuario(novoUsuario);
     return true;
+  }
+
+  /**
+   * 💰 ADICIONAR SALDO (usado pelo gerente)
+   */
+  adicionarSaldo(valor: number) {
+    const user = this.usuarioSignal();
+
+    if (!user) return;
+
+    if (valor <= 0) return; // proteção básica
+
+    const atualizado: Usuario = {
+      ...user,
+      saldo: (user.saldo || 0) + valor
+    };
+
+    this.usuarioSignal.set(atualizado);
+    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(atualizado));
+
+    this.atualizarListaUsuarios(atualizado);
+  }
+
+  /**
+   * 💸 DESCONTAR SALDO (quando cliente usa)
+   */
+  descontarSaldo(valor: number): boolean {
+    const user = this.usuarioSignal();
+
+    if (!user) return false;
+
+    if (valor <= 0) return false;
+
+    if ((user.saldo || 0) < valor) {
+      return false; // saldo insuficiente
+    }
+
+    const atualizado: Usuario = {
+      ...user,
+      saldo: user.saldo - valor
+    };
+
+    this.usuarioSignal.set(atualizado);
+    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(atualizado));
+
+    this.atualizarListaUsuarios(atualizado);
+
+    return true;
+  }
+
+  /**
+   * 🔄 Atualiza usuário na lista geral
+   */
+  private atualizarListaUsuarios(usuarioAtualizado: Usuario) {
+    const usuarios = this.getUsuariosCadastrados();
+
+    const index = usuarios.findIndex(u => u.email === usuarioAtualizado.email);
+
+    if (index !== -1) {
+      usuarios[index] = usuarioAtualizado;
+      localStorage.setItem(this.STORAGE_USERS, JSON.stringify(usuarios));
+    }
   }
 
   /**
@@ -111,9 +182,9 @@ export class AuthService {
     try {
       const user = JSON.parse(data);
 
-      // garante compatibilidade com versões antigas
       return {
         ...user,
+        nome: user.nome ?? user.email?.split('@')[0],
         saldo: user.saldo ?? 0
       };
     } catch {
@@ -122,7 +193,7 @@ export class AuthService {
   }
 
   /**
-   * 👥 Lista de usuários cadastrados
+   * 👥 Lista de usuários
    */
   private getUsuariosCadastrados(): Usuario[] {
     const data = localStorage.getItem(this.STORAGE_USERS);
@@ -130,7 +201,7 @@ export class AuthService {
   }
 
   /**
-   * 💾 Salva usuário na lista de usuários cadastrados
+   * 💾 Salvar usuário
    */
   private salvarUsuario(usuario: Usuario) {
     const usuarios = this.getUsuariosCadastrados();
@@ -144,4 +215,25 @@ export class AuthService {
   getUsuario(): Usuario | null {
     return this.usuarioSignal();
   }
+
+  adicionarSaldoUsuario(email: string, valor: number) {
+  const usuarios = this.getUsuariosCadastrados();
+
+  const index = usuarios.findIndex(u => u.email === email);
+
+  if (index === -1) return;
+
+  usuarios[index].saldo = (usuarios[index].saldo ?? 0) + valor;
+
+  localStorage.setItem(this.STORAGE_USERS, JSON.stringify(usuarios));
+
+  // atualiza se for o usuário logado
+  const atual = this.usuarioSignal();
+  if (atual?.email === email) {
+    this.usuarioSignal.set({
+      ...atual,
+      saldo: usuarios[index].saldo
+    });
+  }
+}
 }

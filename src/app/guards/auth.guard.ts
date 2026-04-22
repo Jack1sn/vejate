@@ -7,24 +7,22 @@ export const authGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
   const auth = inject(AuthService);
   const router = inject(Router);
 
-  // 🔐 Se não está logado → vai para login
+  // 🔐 não logado
   if (!auth.estaLogado()) {
     return router.parseUrl('/login');
   }
 
-  const usuario = auth.getUsuario();
+  const usuario = auth.usuario(); // ✔ usar signal/computed direto
   const roleEsperada = route.data?.['role'];
 
-  // 🎯 Se a rota exige role específica
+  // 🎯 controle de role
   if (roleEsperada && usuario?.role !== roleEsperada) {
 
-    // Se for admin, manda para admin
     if (usuario?.role === 'admin') {
-      return router.parseUrl('/admin');
+      return router.parseUrl('/admin/dashboard');
     }
 
-    // Se for cliente, manda para cliente
-    return router.parseUrl('/cliente');
+    return router.parseUrl('/home');
   }
 
   return true;

@@ -16,29 +16,42 @@ import { CreditoComponent } from "../../pages/credito/credito";
 })
 export class HeaderComponent {
 
-  private auth = inject(AuthService);
+   auth = inject(AuthService);
   private router = inject(Router);
   private notificacaoService = inject(NotificacaoService);
   private receitaService = inject(ReceitaService);
   private buscaService = inject(BuscaService);
 
+  // 🔥 Estado UI
   menuAberto = false;
   scrolled = false;
+  recargaAberta = false;
 
+  // 🔐 Auth (signals)
   usuario = this.auth.usuario;
   estaLogado = this.auth.estaLogado;
   ehAdmin = this.auth.ehAdmin;
+
+  // 👉 NOVO: nome pronto pro header
+  nomeUsuario = this.auth.nomeUsuario;
+
+  // 🔔 Notificações
   notificacoes = this.notificacaoService.notificacoes;
 
+  // 🔎 Busca
   termoBusca = '';
   resultadosDropdown: Receita[] = [];
 
+  // -------------------------
+  // MENU
+  // -------------------------
   toggleMenu() {
     this.menuAberto = !this.menuAberto;
   }
 
   logout() {
     this.auth.logout();
+    this.menuAberto = false; // 🔥 fecha menu mobile
     this.router.navigate(['/home']);
   }
 
@@ -47,58 +60,71 @@ export class HeaderComponent {
     this.scrolled = window.scrollY > 20;
   }
 
-  // Sugestões enquanto digita
+  // -------------------------
+  // BUSCA INTELIGENTE
+  // -------------------------
   filtrarReceitas() {
     const termo = this.termoBusca?.trim();
+
     if (!termo) {
       this.resultadosDropdown = [];
       return;
     }
 
-    const termoNorm = termo.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    const termoNorm = termo
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '');
 
-    this.resultadosDropdown = this.receitaService.receitas().filter(r =>
-      r.titulo.toLowerCase().includes(termoNorm) ||
-      r.descricao.toLowerCase().includes(termoNorm) ||
-      r.categoria.toLowerCase().includes(termoNorm) ||
-      (r.doencas && r.doencas.some(d => d.toLowerCase().includes(termoNorm)))
-    );
+    this.resultadosDropdown = this.receitaService.receitas().filter(r => {
+      const titulo = r.titulo.toLowerCase();
+      const descricao = r.descricao.toLowerCase();
+      const categoria = r.categoria.toLowerCase();
+      const doencas = r.doencas?.join(' ').toLowerCase() || '';
+
+      return (
+        titulo.includes(termoNorm) ||
+        descricao.includes(termoNorm) ||
+        categoria.includes(termoNorm) ||
+        doencas.includes(termoNorm)
+      );
+    });
   }
 
-  // Pesquisa completa
   buscar() {
     const termo = this.termoBusca?.trim();
     if (!termo) return;
 
     this.buscaService.pesquisar(termo);
 
-    this.termoBusca = '';
-    this.resultadosDropdown = [];
-
+    this.resetBusca();
     this.router.navigate(['/dor']);
   }
 
   selecionarReceita(r: Receita) {
     this.buscaService.pesquisar(r.titulo);
+    this.resetBusca();
     this.router.navigate(['/dor']);
+  }
+
+  private resetBusca() {
     this.termoBusca = '';
     this.resultadosDropdown = [];
   }
 
+  // -------------------------
+  // RECARGA
+  // -------------------------
+  toggleRecarga() {
+    this.recargaAberta = !this.recargaAberta;
+  }
 
-  //----
-  recargaAberta = false;
+  abrirRecargaMobile() {
+    this.recargaAberta = true;
+    this.menuAberto = false;
+  }
 
-toggleRecarga() {
-  this.recargaAberta = !this.recargaAberta;
-}
-
-abrirRecargaMobile() {
-  this.recargaAberta = true;
-  this.menuAberto = false;
-}
-
-fecharRecarga() {
-  this.recargaAberta = false;
-}
+  fecharRecarga() {
+    this.recargaAberta = false;
+  }
 }

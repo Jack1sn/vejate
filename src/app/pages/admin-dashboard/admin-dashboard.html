@@ -1,0 +1,90 @@
+<div class="p-6">
+
+  <h1 class="text-2xl font-bold mb-6">
+    📊 Dashboard Administrativo
+  </h1>
+
+  <!-- FILTROS -->
+  <div class="flex gap-3 mb-6">
+    <button (click)="filtro='todos'">Todos</button>
+    <button (click)="filtro='pendente'">Pendentes</button>
+    <button (click)="filtro='aprovado'">Aprovados</button>
+    <button (click)="filtro='rejeitado'">Rejeitados</button>
+  </div>
+
+  <!-- LISTA -->
+  <div class="space-y-4">
+
+    <div *ngFor="let r of listaFiltrada"
+         class="border p-4 rounded-lg flex justify-between items-start">
+
+      <!-- INFO -->
+      <div class="space-y-1">
+
+        <p><b>📧 {{ r.email }}</b></p>
+
+        <!-- 💰 SALDO DO CLIENTE -->
+        <p class="text-sm text-gray-600">
+          💰 Saldo atual: R$ {{ getSaldo(r.email) }}
+        </p>
+
+        <p>💸 Valor recarga: R$ {{ r.valor }}</p>
+
+        <p>📅 {{ r.data | date:'short' }}</p>
+
+        <p>
+          Status:
+          <span [ngClass]="{
+            'text-yellow-500': r.status === 'pendente',
+            'text-green-600': r.status === 'aprovado',
+            'text-red-500': r.status === 'rejeitado'
+          }">
+            {{ r.status }}
+          </span>
+        </p>
+      </div>
+
+      <!-- AÇÕES -->
+      <div class="flex flex-col gap-2 items-end">
+
+        <!-- BOTÕES RECARGA -->
+        <div *ngIf="r.status === 'pendente'" class="flex gap-2">
+
+          <button
+            (click)="aprovar(r.id)"
+            class="bg-green-600 text-white px-3 py-1 rounded">
+            Aprovar
+          </button>
+
+          <button
+            (click)="rejeitar(r.id)"
+            class="bg-red-600 text-white px-3 py-1 rounded">
+            Rejeitar
+          </button>
+
+        </div>
+
+        <!-- 💰 ADICIONAR SALDO MANUAL -->
+        <div class="flex gap-2 mt-2">
+
+          <input
+            type="number"
+            [(ngModel)]="valoresSaldo[r.email]"
+            placeholder="Saldo"
+            class="border px-2 py-1 w-24 rounded"
+          />
+
+          <button
+            (click)="adicionarSaldo(r.email)"
+            class="bg-blue-600 text-white px-3 py-1 rounded">
+            + Saldo
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</div>
