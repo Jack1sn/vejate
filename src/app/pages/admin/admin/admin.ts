@@ -107,4 +107,10 @@ export class AdminComponent {
   remover(id: number) {
     this.receitaService.remover(id);
   }
+
+ 
+
+irParaRecargas() {
+  this.router.navigate(['/admin/dashboard']);
+}
 }

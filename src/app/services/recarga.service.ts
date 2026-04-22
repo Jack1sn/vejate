@@ -28,6 +28,7 @@ solicitarRecarga(valor: number) {
     const nova: Recarga = {
       id: Date.now().toString(),
       email: user.email,
+      nome :user.nome,
       valor,
       status: 'aprovado',
       data: new Date()
@@ -45,6 +46,7 @@ solicitarRecarga(valor: number) {
   const nova: Recarga = {
     id: Date.now().toString(),
     email: user.email,
+    nome : user.nome,
     valor,
     status: 'pendente',
     data: new Date()

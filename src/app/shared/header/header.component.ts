@@ -8,6 +8,7 @@ import { ReceitaService, Receita } from '../../services/receita.service';
 import { BuscaService } from '../../services/busca.service';
 import { CreditoComponent } from "../../pages/credito/credito";
 
+
 @Component({
   selector: 'app-header',
   standalone: true,
@@ -127,4 +128,10 @@ export class HeaderComponent {
   fecharRecarga() {
     this.recargaAberta = false;
   }
+
+  mostrarSaldo = false;
+
+toggleSaldo() {
+  this.mostrarSaldo = !this.mostrarSaldo;
+}
 }

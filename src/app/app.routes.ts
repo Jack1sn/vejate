@@ -44,7 +44,7 @@ export const routes: Routes = [
 },
 
   // Doação
-  { path: 'doar', component: DoarComponent },
+  { path: 'recargar', component: DoarComponent },
 
   // Rota inválida (fallback)
   { path: '**', redirectTo: 'home' }

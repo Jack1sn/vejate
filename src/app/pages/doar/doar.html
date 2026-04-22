@@ -4,16 +4,17 @@
 
     <!-- Título -->
     <h2 class="text-2xl md:text-1xl font-bold text-green-700 mb-4 mt-4 md:mb-6 text-center">
-       Apoie o projeto VEJATE
+       Apoie o  VEJATE
     </h2>
 
-    <p class="text-gray-600 text-center mb-6 md:mb-8 text-sm md:text-base">
-      Você pode doar qualquer valor em  qualquer lugar do mundo.
-    </p>
+   <p class="text-gray-600 text-justify mb-6 md:mb-8 text-sm md:text-base">
+  Você pode carregar seu saldo a partir de R$ 15,00 via PIX com o mesmo nome do cliente cadastrado no sistema Vejate. <br>
+  O valor será disponibilizado no seu saldo após o envio do comprovante para o e-mail: comprovante@vejate.com.
+</p>
 
     <!-- PIX Brasil -->
     <div class="border rounded-lg p-4 md:p-6 mb-6">
-      <h3 class="font-semibold text-base md:text-lg mb-3"> Doação  com pix</h3>
+      <h3 class="font-semibold text-base md:text-lg mb-3"> Carregar  com pix</h3>
       
 
       <div class="flex flex-col md:flex-row items-center md:items-start justify-between gap-4">
@@ -41,9 +42,9 @@
     </div>
 
     <!-- Internacional -->
-    <div class="border rounded-lg p-4 md:p-6 mb-6">
+    <div *ngIf="ehAdmin()" class="border rounded-lg p-4 md:p-6 mb-6"> 
       <p class="text-gray-500 text-sm md:text-base mb-3">
-        Outros tipos de doações, utilize PayPal ou Cartão de Crédito (Visa/Mastercard).
+        Outra  forma  de carregamento, utilize PayPal ou Cartão de Crédito (Visa/Mastercard).
       </p>
 
       <div class="flex flex-col sm:flex-row gap-2 mb-3">
@@ -60,18 +61,18 @@
       <div class="flex flex-col md:flex-row gap-2">
         <button (click)="doarPayPal()"
                 class="flex-1 bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition text-sm">
-          Doar com PayPal
+          Carregar com PayPal
         </button>
         <button (click)="doarStripe()"
                 class="flex-1 bg-purple-600 text-white py-2 rounded hover:bg-purple-700 transition text-sm">
-          Doar com Cartão (Visa/Mastercard)
+          Carregar com Cartão (Visa/Mastercard)
         </button>
       </div>
     </div>
 
     <!-- Rodapé -->
     <div class="mt-4 md:mt-6 text-center text-sm text-gray-500">
-      Obrigado por apoiar o projeto  VEJATE❤️
+      Obrigado por apoiar o   VEJATE❤️
     </div>
 
   </div>

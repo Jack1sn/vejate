@@ -1,38 +1,71 @@
 <div class="p-6">
 
-  <h1 class="text-2xl font-bold mb-6">
+  <!-- ================= HEADER ================= -->
+  <h1 class="text-2xl font-light tracking-wide mb-6">
     📊 Dashboard Administrativo
   </h1>
 
-  <!-- FILTROS -->
-  <div class="flex gap-3 mb-6">
-    <button (click)="filtro='todos'">Todos</button>
-    <button (click)="filtro='pendente'">Pendentes</button>
-    <button (click)="filtro='aprovado'">Aprovados</button>
-    <button (click)="filtro='rejeitado'">Rejeitados</button>
+  <!-- ================= FILTROS ================= -->
+  <div class="grid md:grid-cols-4 gap-3 mb-6">
+
+    <!-- BUSCA -->
+    <input
+      [(ngModel)]="filtroTexto"
+      placeholder="Nome ou email"
+      class="border px-3 py-2 rounded text-sm"
+    />
+
+    <!-- STATUS -->
+    <select [(ngModel)]="filtro" class="border px-3 py-2 rounded text-sm">
+      <option value="todos">Todos</option>
+      <option value="pendente">Pendentes</option>
+      <option value="aprovado">Aprovados</option>
+      <option value="rejeitado">Rejeitados</option>
+    </select>
+
+    <!-- DATA -->
+    <input
+      type="date"
+      [(ngModel)]="filtroData"
+      class="border px-3 py-2 rounded text-sm"
+    />
+
+    <!-- RESET PAGINA -->
+    <button
+      (click)="pagina = 1"
+      class="bg-gray-100 hover:bg-gray-200 rounded px-3 py-2 text-sm"
+    >
+      🔄 Reset
+    </button>
+
   </div>
 
-  <!-- LISTA -->
+  <!-- ================= LISTA ================= -->
   <div class="space-y-4">
 
-    <div *ngFor="let r of listaFiltrada"
-         class="border p-4 rounded-lg flex justify-between items-start">
+    <div *ngFor="let r of listaPaginada"
+         class="border rounded-lg p-4 flex flex-col md:flex-row md:justify-between gap-4">
 
-      <!-- INFO -->
-      <div class="space-y-1">
+      <!-- ================= INFO ================= -->
+      <div class="space-y-1 font-light">
 
-        <p><b>📧 {{ r.email }}</b></p>
+        <p class="font-medium">📧 {{ r.email }}</p>
 
-        <!-- 💰 SALDO DO CLIENTE -->
+        <p class="text-sm text-gray-600">
+          👤 {{ r.nome }}
+        </p>
+
         <p class="text-sm text-gray-600">
           💰 Saldo atual: R$ {{ getSaldo(r.email) }}
         </p>
 
         <p>💸 Valor recarga: R$ {{ r.valor }}</p>
 
-        <p>📅 {{ r.data | date:'short' }}</p>
+        <p class="text-sm text-gray-500">
+          📅 {{ r.data | date:'short' }}
+        </p>
 
-        <p>
+        <p class="text-sm">
           Status:
           <span [ngClass]="{
             'text-yellow-500': r.status === 'pendente',
@@ -42,41 +75,45 @@
             {{ r.status }}
           </span>
         </p>
+
       </div>
 
-      <!-- AÇÕES -->
-      <div class="flex flex-col gap-2 items-end">
+      <!-- ================= AÇÕES ================= -->
+      <div class="flex flex-col gap-3 items-end">
 
-        <!-- BOTÕES RECARGA -->
+        <!-- BOTÕES -->
         <div *ngIf="r.status === 'pendente'" class="flex gap-2">
 
           <button
             (click)="aprovar(r.id)"
-            class="bg-green-600 text-white px-3 py-1 rounded">
+            class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 transition text-sm"
+          >
             Aprovar
           </button>
 
           <button
             (click)="rejeitar(r.id)"
-            class="bg-red-600 text-white px-3 py-1 rounded">
+            class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition text-sm"
+          >
             Rejeitar
           </button>
 
         </div>
 
-        <!-- 💰 ADICIONAR SALDO MANUAL -->
-        <div class="flex gap-2 mt-2">
+        <!-- SALDO MANUAL -->
+        <div class="flex gap-2 items-center">
 
           <input
             type="number"
             [(ngModel)]="valoresSaldo[r.email]"
             placeholder="Saldo"
-            class="border px-2 py-1 w-24 rounded"
+            class="border px-2 py-1 w-24 rounded text-sm"
           />
 
           <button
             (click)="adicionarSaldo(r.email)"
-            class="bg-blue-600 text-white px-3 py-1 rounded">
+            class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition text-sm"
+          >
             + Saldo
           </button>
 
@@ -87,4 +124,21 @@
     </div>
 
   </div>
+
+  <!-- ================= PAGINAÇÃO ================= -->
+  <div class="flex justify-center gap-2 mt-6">
+
+    <button
+      *ngFor="let p of [].constructor(totalPaginas); let i = index"
+      (click)="mudarPagina(i + 1)"
+      class="px-3 py-1 border rounded text-sm"
+      [ngClass]="{
+        'bg-green-600 text-white': pagina === i + 1
+      }"
+    >
+      {{ i + 1 }}
+    </button>
+
+  </div>
+
 </div>

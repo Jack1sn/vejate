@@ -4,10 +4,17 @@
   <aside class="w-64 bg-green-700 text-white p-6 hidden md:block">
     <h2 class="text-2xl font-bold mb-8">🌿 Admin</h2>
     <nav class="space-y-4">
-      <button (click)="setView('dashboard')" class="w-full text-left hover:bg-green-600 p-2 rounded transition">📊 Dashboard</button>
-      <button (click)="setView('receitas')" class="w-full text-left hover:bg-green-600 p-2 rounded transition">📋 Receitas</button>
-      <button (click)="setView('admin/dashboard')" class="w-full text-left hover:bg-green-600 p-2 rounded transition">📋 Recargas</button>
-      <button (click)="logout()" class="w-full text-left bg-red-500 hover:bg-red-600 p-2 rounded transition mt-6">🚪 Sair</button>
+      <button (click)="setView('dashboard')" class="w-full text-left hover:bg-green-600 p-2 rounded transition">
+        📊 Dashboard</button>
+      <button (click)="setView('receitas')" class="w-full text-left hover:bg-green-600 p-2 rounded transition">
+        📋 Receitas</button>
+<button 
+  (click)="irParaRecargas()" 
+  class="w-full text-left hover:bg-green-600 p-2 rounded transition">
+  📋 Recargas
+</button>     
+<button (click)="logout()" class="w-full text-left bg-red-500 hover:bg-red-600 p-2 rounded transition mt-6">
+  🚪 Sair</button>
     </nav>
   </aside>
 

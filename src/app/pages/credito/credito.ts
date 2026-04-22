@@ -22,7 +22,7 @@ export class CreditoComponent {
   paisDetectado = '';
   paisSelecionado = '';
 
-  valores = [15,20,25,30,35,40,45,50,60,70,80,90,100];
+  valores = [15,20,25,30,35,40,50,60,70,80,90,100];
 
   paises = [
     { codigo: 'DO', nome: 'República Dominicana 🇩🇴', moeda: 'DOP', taxa: 11.89 },
@@ -49,23 +49,44 @@ export class CreditoComponent {
     return this.paises.find(p => p.codigo === this.paisSelecionado);
   }
 
-  converter(valor: number) {
-    if (!this.paisAtual) return 0;
-    return (valor * this.paisAtual.taxa).toFixed(2);
+  // 💱 converter moeda formatado
+converter(valor: number): string {
+  if (!this.paisAtual) return '0.00';
+  return this.formatar(valor * this.paisAtual.taxa);
+}
+
+  // 💰 pegar saldo atual
+  get saldo(): number {
+    return this.auth.usuario()?.saldo ?? 0;
   }
 
-  // 💳 RECARGA PRINCIPAL (CORRIGIDA)
+  // 💳 RECARGA COM VALIDAÇÃO
   pagar(valor: number) {
+
     if (!this.numeroValido) {
       alert('Número inválido');
       return;
     }
 
-    // 🔥 SEM SALDO → vai para aprovação
-    this.recargaService.solicitarRecarga(valor);
+    const user = this.auth.usuario();
 
-    alert('Recarga enviada com sucesso! Aguarde aprovação.');
+if (!user) {
+  alert('Usuário não autenticado');
+  return;
+}
 
+// 🔴 VALIDA SALDO
+if (user.saldo < valor) {
+  alert('❌ Saldo insuficiente');
+  return;
+}
+
+// ✅ DESCONTA SALDO
+this.auth.adicionarSaldoUsuario(user.email, -valor);
+
+// ✅ ENVIA RECARGA
+this.recargaService.solicitarRecarga(valor);
+alert(`✅ Recarga enviada com sucesso!\nValor: R$ ${this.formatar(valor)}`);
     this.limparFormulario();
   }
 
@@ -86,4 +107,8 @@ export class CreditoComponent {
         String.fromCodePoint(127397 + char.charCodeAt(0))
       );
   }
+
+  formatar(valor: number): string {
+  return valor.toFixed(2);
+}
 }

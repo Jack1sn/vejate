@@ -1,163 +1,131 @@
-<div class="min-h-screen bg-gray-50 pt-24 px-4 sm:px-6 lg:px-8">
+<div class="min-h-screen bg-gray-50 pt-24 px-4 sm:px-6 lg:px-8 space-y-10">
 
-  <!-- HERO -->
-  <section class="text-center mb-14 sm:mb-16">
+  <!-- ================= HERO COMPACTO ================= -->
+  <section class="text-center max-w-4xl mx-auto">
 
-    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-green-700 mb-4 tracking-tight">
-      🌿 VEJATE
+    <h1 class="text-3xl sm:text-4xl font-light text-green-700 flex items-center justify-center gap-2">
+      <i class="fa-solid fa-leaf"></i>
+      VEJATE
     </h1>
 
-    <p class="text-gray-600 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
-      Encontre receitas naturais para melhorar sua saúde e bem-estar de forma simples e organizada.
+    <p class="text-gray-600 mt-3 text-sm sm:text-base">
+      Receitas naturais organizadas por objetivo de saúde e bem-estar.
     </p>
 
   </section>
 
-  <!-- BUSCA PRINCIPAL -->
-  <section class="mb-14">
+  <!-- ================= BUSCA ================= -->
+  <section class="max-w-3xl mx-auto">
 
-    <div class="max-w-3xl mx-auto text-center mb-6">
-      <h2 class="text-xl sm:text-2xl font-semibold text-gray-800">
-        O que você está buscando hoje?
-      </h2>
-      <p class="text-gray-500 text-sm sm:text-base mt-2">
-        Digite um sintoma ou objetivo (ex: ansiedade, imunidade, dor...)
-      </p>
-    </div>
-
-    <div class="flex flex-col sm:flex-row gap-3 justify-center items-stretch max-w-2xl mx-auto">
+    <div class="relative">
+      <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
 
       <input
         type="text"
-        placeholder="Buscar receitas naturais..."
         [(ngModel)]="termoBusca"
         (keyup.enter)="buscar()"
-        class="w-full sm:w-[450px] md:w-[520px] lg:w-[600px]
-               px-5 py-3 rounded-full border
-               focus:outline-none focus:ring-2 focus:ring-green-500 shadow-sm"
+        placeholder="Buscar receita, sintoma ou objetivo..."
+        class="w-full pl-10 pr-4 py-3 rounded-full border shadow-sm
+               focus:ring-2 focus:ring-green-500 focus:outline-none"
       />
-
-      <button
-        (click)="buscar()"
-        class="bg-green-600 text-white px-6 py-3 rounded-full
-               hover:bg-green-700 transition shadow-md w-full sm:w-auto"
-      >
-        Buscar
-      </button>
-
     </div>
 
   </section>
 
-  <!-- SOBRE -->
-  <section class="bg-white p-6 sm:p-8 md:p-10 rounded-2xl shadow-md mb-14 max-w-5xl mx-auto border border-gray-100">
+  <!-- ================= GRID PRINCIPAL ================= -->
+  <section class="grid lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
 
-    <h2 class="text-2xl sm:text-3xl font-bold text-green-700 mb-6">
-      Sobre o VEJATE
-    </h2>
 
-    <div class="space-y-5 text-gray-700 leading-relaxed text-sm sm:text-base">
+       <!-- ===== SOBRE ===== -->
+    <div class="bg-white rounded-2xl shadow p-5">
+      <h3 class="font-light text-lg mb-3 flex items-center gap-2">
+        <i class="fa-solid fa-circle-info text-green-600"></i>
+        Sobre
+      </h3>
 
-      <p>
-        O VEJATE é uma plataforma criada para compartilhar receitas naturais de forma segura, organizada e educativa.
+      <p class="text-sm text-gray-600 leading-relaxed">
+        Plataforma de receitas naturais e recargas internacionais.
       </p>
 
-      <p>
-        Você pode explorar conteúdos por categorias específicas para facilitar sua busca.
-      </p>
+      <div class="mt-4 text-xs text-yellow-700 bg-yellow-50 p-3 rounded-lg">
+        ⚠️ Conteúdo informativo, não substitui médico.
+      </div>
+    </div>
 
-      <!-- TAGS -->
-      <div class="flex flex-wrap gap-2 pt-2">
 
-        <span class="bg-green-100 text-green-700 px-4 py-1 rounded-full text-xs sm:text-sm font-medium">
-          Imunidade
-        </span>
+    <!-- ===== CATEGORIAS ===== -->
+    <div class="bg-white rounded-2xl shadow p-5">
+      <h3 class="font-light text-lg mb-4 flex items-center gap-2">
+        <i class="fa-solid fa-layer-group text-green-600"></i>
+        Categorias
+      </h3>
 
-        <span class="bg-green-100 text-green-700 px-4 py-1 rounded-full text-xs sm:text-sm font-medium">
-          Calmante
-        </span>
+      <div class="grid grid-cols-2 gap-3 text-center text-sm">
 
-        <span class="bg-green-100 text-green-700 px-4 py-1 rounded-full text-xs sm:text-sm font-medium">
-          Foco
-        </span>
+        <a routerLink="/categoria/imunidade" class="p-3 border rounded-lg hover:bg-green-50">
+          <i class="fa-solid fa-shield-heart text-green-600"></i><br>Imunidade
+        </a>
 
-        <span class="bg-green-100 text-green-700 px-4 py-1 rounded-full text-xs sm:text-sm font-medium">
-          Digestão
-        </span>
+        <a routerLink="/categoria/calmante" class="p-3 border rounded-lg hover:bg-green-50">
+          <i class="fa-solid fa-spa text-green-600"></i><br>Calmante
+        </a>
 
-        <span class="bg-green-100 text-green-700 px-4 py-1 rounded-full text-xs sm:text-sm font-medium">
-          Dor
-        </span>
+        <a routerLink="/categoria/foco" class="p-3 border rounded-lg hover:bg-green-50">
+          <i class="fa-solid fa-brain text-green-600"></i><br>Foco
+        </a>
+
+        <a routerLink="/categoria/digestao" class="p-3 border rounded-lg hover:bg-green-50">
+          <i class="fa-solid fa-leaf text-green-600"></i><br>Digestão
+        </a>
 
       </div>
+    </div>
 
-      <div class="mt-6 p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded-lg">
-        <p class="text-yellow-700 font-medium">
-          ⚠️ As receitas são informativas e não substituem orientação médica.
+ 
+    <!-- ===== RECARGA (INTEGRADA NA HOME) ===== -->
+    <div class="bg-white rounded-2xl shadow p-5">
+
+      <h3 class="font-light text-lg mb-4 flex items-center gap-2">
+        <i class="fa-solid fa-wallet text-green-600"></i>
+        Recarga de saldo
+      </h3>
+
+      <p class="text-xs text-gray-500 mb-3 text-justify">
+        Você pode carregar seu saldo a partir de R$ 15 via PIX.
+      </p>
+
+      <!-- FORM -->
+      <div class="space-y-3">
+
+        <input
+          type="number"
+          placeholder="Valor"
+          class="w-full border rounded-lg px-3 py-2 text-sm"
+        />
+
+        <button
+          class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition flex items-center justify-center gap-2"
+        >
+          <i class="fa-solid fa-qrcode"></i>
+          Gerar PIX
+        </button>
+
+        <p class="text-[11px] text-gray-400 text-center">
+          Envio manual do comprovante por e-mail
         </p>
+
       </div>
 
     </div>
 
   </section>
 
-  <!-- CATEGORIAS CTA -->
-  <section class="text-center max-w-5xl mx-auto mb-14">
-
-    <h3 class="text-xl sm:text-2xl font-bold text-gray-800 mb-8">
-      Explore por categoria
-    </h3>
-
-    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-
-      <a routerLink="/categoria/imunidade"
-         class="bg-white p-4 rounded-xl shadow hover:shadow-md transition border">
-        🛡️<br>
-        <span class="text-sm font-medium">Imunidade</span>
-      </a>
-
-      <a routerLink="/categoria/calmante"
-         class="bg-white p-4 rounded-xl shadow hover:shadow-md transition border">
-        😌<br>
-        <span class="text-sm font-medium">Calmante</span>
-      </a>
-
-      <a routerLink="/categoria/foco"
-         class="bg-white p-4 rounded-xl shadow hover:shadow-md transition border">
-        🧠<br>
-        <span class="text-sm font-medium">Foco</span>
-      </a>
-
-      <a routerLink="/categoria/digestao"
-         class="bg-white p-4 rounded-xl shadow hover:shadow-md transition border">
-        🌿<br>
-        <span class="text-sm font-medium">Digestão</span>
-      </a>
-
-      <a routerLink="/categoria/dor"
-         class="bg-white p-4 rounded-xl shadow hover:shadow-md transition border">
-        💊<br>
-        <span class="text-sm font-medium">Dor</span>
-      </a>
-
-    </div>
-
-  </section>
-
-  <!-- CTA FINAL -->
+  <!-- ================= CTA FINAL ================= -->
   <section class="text-center max-w-3xl mx-auto">
 
-    <h3 class="text-xl sm:text-2xl font-bold text-gray-800 mb-3">
-      Comece agora
-    </h3>
-
-    <p class="text-gray-600 text-sm sm:text-base mb-8">
-      Use a busca ou explore categorias para encontrar o que você precisa.
-    </p>
-
     <a routerLink="/categoria/imunidade"
-       class="inline-block bg-green-600 text-white px-8 py-3 rounded-full font-semibold
-              hover:bg-green-700 hover:shadow-lg transition">
+       class="inline-flex items-center gap-2 bg-green-600 text-white px-6 py-3 rounded-full shadow hover:bg-green-700 transition">
+      <i class="fa-solid fa-rocket"></i>
       Explorar agora
     </a>
 

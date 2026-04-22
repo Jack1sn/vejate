@@ -19,19 +19,64 @@ export class AdminDashboardComponent {
 
   recargas = this.recargaService.recargas;
 
+  // ================= FILTROS =================
   filtro: 'todos' | 'pendente' | 'aprovado' | 'rejeitado' = 'todos';
+  filtroTexto = '';
+  filtroData: string = '';
 
-  // 💰 controle de saldo manual por usuário
+  // ================= PAGINAÇÃO =================
+  pagina = 1;
+  porPagina = 5;
+
   valoresSaldo: { [email: string]: number } = {};
 
+  // ================= LISTA FILTRADA =================
   get listaFiltrada(): Recarga[] {
-    const data = this.recargas();
+    let data = this.recargas();
 
-    if (this.filtro === 'todos') return data;
+    // status
+    if (this.filtro !== 'todos') {
+      data = data.filter(r => r.status === this.filtro);
+    }
 
-    return data.filter(r => r.status === this.filtro);
+    // texto (nome/email)
+    const termo = this.filtroTexto.toLowerCase().trim();
+    if (termo) {
+      data = data.filter(r =>
+        (r.nome ?? '').toLowerCase().includes(termo) ||
+        (r.email ?? '').toLowerCase().includes(termo)
+      );
+    }
+
+    // data (YYYY-MM-DD)
+    if (this.filtroData) {
+      data = data.filter(r => {
+        const dataRecarga = new Date(r.data as any)
+          .toISOString()
+          .split('T')[0];
+
+        return dataRecarga === this.filtroData;
+      });
+    }
+
+    return data;
   }
 
+  // ================= PAGINAÇÃO FINAL =================
+  get totalPaginas(): number {
+    return Math.ceil(this.listaFiltrada.length / this.porPagina);
+  }
+
+  get listaPaginada(): Recarga[] {
+    const start = (this.pagina - 1) * this.porPagina;
+    return this.listaFiltrada.slice(start, start + this.porPagina);
+  }
+
+  mudarPagina(p: number) {
+    this.pagina = p;
+  }
+
+  // ================= AÇÕES =================
   aprovar(id: string) {
     this.recargaService.aprovarRecarga(id);
   }
@@ -40,18 +85,14 @@ export class AdminDashboardComponent {
     this.recargaService.rejeitarRecarga(id);
   }
 
-  // 💰 ADICIONAR SALDO MANUAL
   adicionarSaldo(email: string) {
     const valor = this.valoresSaldo[email] ?? 0;
-
     if (valor <= 0) return;
 
     this.auth.adicionarSaldoUsuario(email, valor);
-
     this.valoresSaldo[email] = 0;
   }
 
-  // 👤 pegar saldo do usuário
   getSaldo(email: string): number {
     const usuarios = JSON.parse(localStorage.getItem('vejate_users') || '[]');
     const user = usuarios.find((u: any) => u.email === email);

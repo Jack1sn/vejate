@@ -1,4 +1,4 @@
-<header 
+<header
   class="fixed top-0 left-0 w-full z-50 transition-all duration-300"
   [ngClass]="{
     'bg-white shadow-md': scrolled,
@@ -7,135 +7,234 @@
 >
   <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex justify-between items-center">
 
-    <!-- Logo -->
+    <!-- ================= LOGO ================= -->
     <a
       routerLink="/home"
-      class="text-lg sm:text-xl md:text-2xl font-bold flex items-center gap-2"
+      class="flex items-center gap-2 font-light tracking-wide text-lg sm:text-xl md:text-2xl"
       [ngClass]="{
         'text-green-700': scrolled,
         'text-white': !scrolled
       }"
     >
-      🌿 VEJATE
+      |<i class="fa-solid fa-leaf text-sm"></i>
+      VEJATE
     </a>
 
-    <!-- Desktop -->
-    <nav class="hidden md:flex items-center gap-5 lg:gap-6 text-sm lg:text-base">
+    <!-- ================= DESKTOP NAV ================= -->
+    <nav class="hidden md:flex items-center gap-6 text-sm font-light tracking-wide">
 
-      <a routerLink="/home">Home</a>
-        <a routerLink="/cliente">Todos</a>
-      <a routerLink="/categoria/imunidade">Imunidade</a>
-      <a routerLink="/categoria/calmante">Calmante</a>
-      <a routerLink="/categoria/foco">Foco</a>
-      <a routerLink="/categoria/digestao">Digestão</a>
-      <a routerLink="/categoria/dor">Dor</a>
+      <a routerLink="/home" class="flex items-center gap-2 hover:text-green-500 transition">
+        <i class="fa-solid fa-house text-xs"></i> Home
+      </a>
 
-      <!-- NOVO BOTÃO RECARGA -->
+      <a routerLink="/cliente" class="flex items-center gap-2 hover:text-green-500 transition">
+        <i class="fa-solid fa-list text-xs"></i> Todos
+      </a>
+
+      <a routerLink="/categoria/imunidade" class="flex items-center gap-2 hover:text-green-500 transition">
+        <i class="fa-solid fa-shield-heart text-xs"></i> Imunidade
+      </a>
+
+      <a routerLink="/categoria/calmante" class="flex items-center gap-2 hover:text-green-500 transition">
+        <i class="fa-solid fa-spa text-xs"></i> Calmante
+      </a>
+
+      <a routerLink="/categoria/foco" class="flex items-center gap-2 hover:text-green-500 transition">
+        <i class="fa-solid fa-bullseye text-xs"></i> Foco
+      </a>
+
+      <a routerLink="/categoria/digestao" class="flex items-center gap-2 hover:text-green-500 transition">
+        <i class="fa-solid fa-utensils text-xs"></i> Digestão
+      </a>
+
+      <a routerLink="/categoria/dor" class="flex items-center gap-2 hover:text-green-500 transition">
+        <i class="fa-solid fa-hand-holding-medical text-xs"></i> Dor
+      </a>
+
+      <!-- RECARGA -->
       <button
         (click)="toggleRecarga()"
-        class="hover:text-green-400 font-medium"
+        class="flex items-center gap-2 font-light hover:text-green-400 transition"
       >
-        🌍 Recarga
+        <i class="fa-solid fa-globe text-xs"></i>
+        Recarga
       </button>
 
-      <!-- SALDO -->
-<div *ngIf="estaLogado()" class="flex items-center gap-4">
+      <!-- ================= LOGADO ================= -->
+      <div *ngIf="estaLogado()" class="flex items-center gap-4 ml-4 font-light">
 
-  <div class="font-semibold">
-    💰 R$ {{ usuario()?.saldo }}
-  </div>
+        <!-- SALDO -->
+       <div class="flex items-center justify-center gap-2">
 
-  <!-- Recarga -->
-  <div> 
-  <a
-  routerLink="/doar"
-    
-    class="hover:text-green-400 font-medium"
-  >
-    + Saldo
-  </a>
-</div>
-  <!-- NOME -->
-  <span class="font-medium">
-    👤 Olá, {{ nomeUsuario() }}
+  <i class="fa-solid fa-wallet text-xs"></i>
+
+  <span>
+    R$
+    <span *ngIf="mostrarSaldo">
+      {{ auth.usuario()?.saldo | number:'1.2-2' }}
+    </span>
+    <span *ngIf="!mostrarSaldo">
+      ****
+    </span>
   </span>
 
-  <!-- Logout -->
-  <button
-    (click)="logout()"
-    class="bg-red-500 text-white px-3 py-1 rounded"
-  >
-    Sair
+  <button (click)="toggleSaldo()" class="text-xs">
+    <i class="fa-solid"
+       [ngClass]="mostrarSaldo ? 'fa-eye-slash' : 'fa-eye'">
+    </i>
   </button>
 
 </div>
 
-<!-- NÃO LOGADO -->
-<div *ngIf="!estaLogado()">
-  <a
-    routerLink="/login"
-    class="bg-green-600 text-white px-4 py-2 rounded-full"
-  >
-    Login
-  </a>
-</div>
+        <!-- + SALDO -->
+        <a *ngIf="!ehAdmin()" routerLink="/recargar" class="flex items-center gap-2 hover:text-green-400">
+          <i class="fa-solid fa-plus text-xs"></i>
+          Saldo
+        </a>
+
+        <!-- ADMIN -->
+        <a *ngIf="ehAdmin()" routerLink="/admin" class="flex items-center gap-2 hover:text-green-400">
+          <i class="fa-solid fa-gear text-xs"></i>
+          Admin
+        </a>
+
+        <!-- USER -->
+        <span class="flex items-center gap-2">
+          <i class="fa-solid fa-user text-xs"></i>
+          {{ nomeUsuario() }}
+        </span>
+
+        <!-- LOGOUT -->
+        <button
+          (click)="logout()"
+          class="flex items-center gap-2 bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition"
+        >
+          <i class="fa-solid fa-right-from-bracket text-xs"></i>
+          Sair
+        </button>
+
+      </div>
+
+      <!-- ================= NÃO LOGADO ================= -->
+      <div *ngIf="!estaLogado()">
+        <a
+          routerLink="/login"
+          class="bg-green-600 text-white px-4 py-2 rounded-full font-light tracking-wide hover:bg-green-700 transition flex items-center gap-2"
+        >
+          <i class="fa-solid fa-right-to-bracket text-xs"></i>
+          Login
+        </a>
+      </div>
 
     </nav>
 
-    <!-- Mobile -->
+    <!-- ================= MOBILE BUTTON ================= -->
     <button class="md:hidden text-2xl" (click)="toggleMenu()">
-      ☰
+      <i class="fa-solid fa-bars"></i>
     </button>
 
   </div>
 
-  <!-- MOBILE MENU -->
+  <!-- ================= MOBILE MENU ================= -->
   <div
     *ngIf="menuAberto"
-    class="md:hidden bg-white px-5 py-5 space-y-4 shadow-md text-black"
+    class="md:hidden bg-white px-5 py-5 space-y-4 shadow-md text-black font-light"
   >
-    <a routerLink="/home" (click)="toggleMenu()">Home</a>
-    <a routerLink="/categoria/imunidade" (click)="toggleMenu()">Imunidade</a>
-    <a routerLink="/categoria/calmante" (click)="toggleMenu()">Calmante</a>
-    <a routerLink="/categoria/foco" (click)="toggleMenu()">Foco</a>
-    <a routerLink="/categoria/digestao" (click)="toggleMenu()">Digestão</a>
-    <a routerLink="/categoria/dor" (click)="toggleMenu()">Dor</a>
+
+    <a routerLink="/home" (click)="toggleMenu()" class="flex items-center gap-2 hover:text-green-500">
+      <i class="fa-solid fa-house text-xs"></i> Home
+    </a>
+
+    <a routerLink="/cliente" (click)="toggleMenu()" class="flex items-center gap-2 hover:text-green-500">
+      <i class="fa-solid fa-list text-xs"></i> Todos
+    </a>
+
+    <a routerLink="/categoria/imunidade" (click)="toggleMenu()" class="flex items-center gap-2 hover:text-green-500">
+      <i class="fa-solid fa-shield-heart text-xs"></i> Imunidade
+    </a>
+
+    <a routerLink="/categoria/calmante" (click)="toggleMenu()" class="flex items-center gap-2 hover:text-green-500">
+      <i class="fa-solid fa-spa text-xs"></i> Calmante
+    </a>
+
+    <a routerLink="/categoria/foco" (click)="toggleMenu()" class="flex items-center gap-2 hover:text-green-500">
+      <i class="fa-solid fa-bullseye text-xs"></i> Foco
+    </a>
+
+    <a routerLink="/categoria/digestao" (click)="toggleMenu()" class="flex items-center gap-2 hover:text-green-500">
+      <i class="fa-solid fa-utensils text-xs"></i> Digestão
+    </a>
+
+    <a routerLink="/categoria/dor" (click)="toggleMenu()" class="flex items-center gap-2 hover:text-green-500">
+      <i class="fa-solid fa-hand-holding-medical text-xs"></i> Dor
+    </a>
 
     <!-- RECARGA MOBILE -->
-    <a (click)="abrirRecargaMobile()">🌍 Recarga</a>
+    <button (click)="abrirRecargaMobile()" class="flex items-center gap-2">
+      <i class="fa-solid fa-globe text-xs"></i>
+      Recarga
+    </button>
 
-   <div *ngIf="estaLogado()" class="space-y-3">
+    <!-- LOGADO MOBILE -->
+    <div *ngIf="estaLogado()" class="space-y-3 font-light">
 
-  <div class="font-semibold text-center">
-    💰 Saldo: R$ {{ auth.usuario()?.saldo }}
-  </div>
-  <div class="text-center font-medium">
-  👤 Olá, {{ nomeUsuario() }}
-</div>
+     <div class="flex items-center justify-center gap-2">
 
-  <a (click)="abrirRecargaMobile()">🌍 Recarga</a>
+  <i class="fa-solid fa-wallet text-xs"></i>
 
-  <button
-    (click)="logout()"
-    class="w-full bg-red-500 text-white py-2 rounded"
-  >
-    Sair
+  <span>
+    R$
+    <span *ngIf="mostrarSaldo">
+      {{ auth.usuario()?.saldo | number:'1.2-2' }}
+    </span>
+    <span *ngIf="!mostrarSaldo">
+      ****
+    </span>
+  </span>
+
+  <button (click)="toggleSaldo()" class="text-xs">
+    <i class="fa-solid"
+       [ngClass]="mostrarSaldo ? 'fa-eye-slash' : 'fa-eye'">
+    </i>
   </button>
 
 </div>
 
-<div *ngIf="!estaLogado()">
-  <a
-    routerLink="/login"
-    class="block text-center bg-green-600 text-white py-2 rounded"
-  >
-    Login
-  </a>
-</div>
+      <div class="flex items-center justify-center gap-2">
+        <i class="fa-solid fa-user text-xs"></i>
+        {{ nomeUsuario() }}
+      </div>
+
+      <a *ngIf="ehAdmin()" routerLink="/admin" (click)="toggleMenu()" class="flex items-center justify-center gap-2 hover:text-green-400">
+        <i class="fa-solid fa-gear text-xs"></i>
+        Admin
+      </a>
+
+      <button
+        (click)="logout()"
+        class="w-full bg-red-500 text-white py-2 rounded flex items-center justify-center gap-2"
+      >
+        <i class="fa-solid fa-right-from-bracket text-xs"></i>
+        Sair
+      </button>
+
+    </div>
+
+    <!-- NÃO LOGADO MOBILE -->
+    <div *ngIf="!estaLogado()">
+      <a
+        routerLink="/login"
+        class="block text-center bg-green-600 text-white py-2 rounded flex items-center justify-center gap-2"
+      >
+        <i class="fa-solid fa-right-to-bracket text-xs"></i>
+        Login
+      </a>
+    </div>
+
   </div>
 </header>
 
-<!-- MODAL RECARGA -->
+<!-- ================= MODAL RECARGA ================= -->
 <div
   *ngIf="recargaAberta"
   class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center"
@@ -146,11 +245,8 @@
     (click)="$event.stopPropagation()"
   >
 
-    <button
-      (click)="fecharRecarga()"
-      class="absolute top-3 right-3 text-xl"
-    >
-      ✖
+    <button (click)="fecharRecarga()" class="absolute top-3 right-3 text-xl">
+      <i class="fa-solid fa-xmark"></i>
     </button>
 
     <app-credito></app-credito>

@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { loadStripe } from '@stripe/stripe-js';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { AuthService } from '../../services/auth.service';
+import { inject } from '@angular/core';
 
 @Component({
   selector: 'app-doar',
@@ -45,4 +47,8 @@ export class DoarComponent {
       }
     });
   }
+
+  auth = inject(AuthService);
+
+ehAdmin = this.auth.ehAdmin;
 }

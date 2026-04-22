@@ -2,12 +2,16 @@
 
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
 
-    <!-- GRID PRINCIPAL -->
+    <!-- GRID -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
 
-      <!-- LOGO / DESCRIÇÃO -->
+      <!-- LOGO -->
       <div>
-        <h2 class="text-xl font-bold mb-3">🌿 VEJATE</h2>
+        <h2 class="text-xl font-semibold mb-3 flex items-center gap-2">
+          <i class="fa-solid fa-leaf"></i>
+          VEJATE
+        </h2>
+
         <p class="text-green-100 text-sm leading-relaxed">
           Plataforma de receitas naturais para melhorar seu bem-estar de forma simples e acessível.
         </p>
@@ -15,7 +19,7 @@
 
       <!-- LINKS -->
       <div>
-        <h3 class="font-semibold mb-3 text-sm uppercase tracking-wide text-green-200">
+        <h3 class="font-medium mb-3 text-sm uppercase tracking-wide text-gray-900">
           Navegação
         </h3>
 
@@ -29,21 +33,19 @@
 
       <!-- LEGAL -->
       <div>
-        <h3 class="font-semibold mb-3 text-sm uppercase tracking-wide text-green-200">
+        <h3 class="font-medium mb-3 text-sm uppercase tracking-wide text-gray-900">
           Legal
         </h3>
 
         <ul class="space-y-2 text-sm">
           <li>
             <a routerLink="/termos"
-               routerLinkActive="underline text-green-300"
                class="hover:text-green-300 transition">
               Termos de Uso
             </a>
           </li>
           <li>
             <a routerLink="/privacidade"
-               routerLinkActive="underline text-green-300"
                class="hover:text-green-300 transition">
               Política de Privacidade
             </a>
@@ -54,33 +56,50 @@
       <!-- CONTATO + REDES -->
       <div class="flex flex-col gap-4">
 
+        <!-- CONTATO -->
         <div>
-          <h3 class="font-semibold mb-2 text-sm uppercase tracking-wide text-green-200">
+          <h3 class="font-medium mb-2 text-sm uppercase tracking-wide text-gray-900">
             Contato
           </h3>
 
           <p class="text-sm text-green-100">
             <a href="mailto:pix@vejate.com"
-               class="hover:text-green-300 transition font-medium">
+               class="hover:text-green-300 transition font-medium flex items-center gap-2">
+              <i class="fa-solid fa-envelope"></i>
               pix@vejate.com
             </a>
           </p>
         </div>
 
+        <!-- REDES -->
         <div>
-          <h3 class="font-semibold mb-2 text-sm uppercase tracking-wide text-green-200">
+          <h3 class="font-medium mb-2 text-sm uppercase tracking-wide text-gray-900">
             Redes
           </h3>
 
-          <div class="flex gap-4 text-xl">
-            <a *ngFor="let rede of redesSociais"
-               [href]="rede.url"
+          <div class="flex gap-5 text-xl">
+
+            <a href="https://facebook.com"
                target="_blank"
-               rel="noopener"
-               class="transition transform hover:scale-110 hover:text-green-300"
-               [title]="rede.nome">
-              <i [class]="rede.iconClass"></i>
+               class="hover:text-green-300 transition transform hover:scale-110"
+               title="Facebook">
+              <i class="fa-brands fa-facebook"></i>
             </a>
+
+            <a href="https://instagram.com"
+               target="_blank"
+               class="hover:text-green-300 transition transform hover:scale-110"
+               title="Instagram">
+              <i class="fa-brands fa-instagram"></i>
+            </a>
+
+            <a href="https://tiktok.com"
+               target="_blank"
+               class="hover:text-green-300 transition transform hover:scale-110"
+               title="TikTok">
+              <i class="fa-brands fa-tiktok"></i>
+            </a>
+
           </div>
         </div>
 
@@ -88,29 +107,30 @@
 
     </div>
 
-    <!-- DIVISOR -->
+    <!-- RODAPÉ FINAL -->
     <div class="border-t border-green-600 mt-8 pt-6 flex flex-col sm:flex-row justify-between items-center gap-4">
 
       <p class="text-green-100 text-sm text-center sm:text-left">
         © 2026 VEJATE. Todos os direitos reservados.
       </p>
 
-      <p class="text-green-200 text-xs text-center sm:text-right">
-        Feito para promover saúde e bem-estar 🌿
+      <p class="text-green-200 text-xs text-center sm:text-right flex items-center gap-1">
+        <i class="fa-solid fa-leaf"></i>
+        Saúde , bem-estar e tecnólogia
       </p>
 
     </div>
 
   </div>
 
-  <!-- BOTÃO VOLTAR AO TOPO -->
+  <!-- BOTÃO TOPO -->
   <button
     *ngIf="scrollTopVisible"
     (click)="scrollToTop()"
     class="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 
            bg-green-600 text-white p-3 rounded-full shadow-lg 
            hover:bg-green-700 transition duration-300 z-50">
-    ↑
+    <i class="fa-solid fa-arrow-up"></i>
   </button>
 
 </footer>
