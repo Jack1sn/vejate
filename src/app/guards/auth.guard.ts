@@ -1,28 +1,30 @@
 import { inject } from '@angular/core';
-import { CanActivateFn, Router, ActivatedRouteSnapshot } from '@angular/router';
+import { CanActivateFn, Router, UrlTree } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 
-export const authGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
+export const authGuard: CanActivateFn = (route): boolean | UrlTree => {
 
   const auth = inject(AuthService);
   const router = inject(Router);
 
-  // 🔐 não logado
-  if (!auth.estaLogado()) {
-    return router.parseUrl('/login');
-  }
-
-  const usuario = auth.usuario(); // ✔ usar signal/computed direto
+  const usuario = auth.usuario();
   const roleEsperada = route.data?.['role'];
 
-  // 🎯 controle de role
-  if (roleEsperada && usuario?.role !== roleEsperada) {
+  // 🔐 1. Não autenticado → login
+  if (!auth.estaLogado() || !usuario) {
+    return router.createUrlTree(['/login']);
+  }
 
-    if (usuario?.role === 'admin') {
-      return router.parseUrl('/admin/dashboard');
+  // 🎯 2. Controle de role (admin/client/etc)
+  if (roleEsperada && usuario.role !== roleEsperada) {
+
+    // admin sempre vai pro dashboard
+    if (usuario.role === 'admin') {
+      return router.createUrlTree(['/admin/dashboard']);
     }
 
-    return router.parseUrl('/home');
+    // fallback seguro
+    return router.createUrlTree(['/home']);
   }
 
   return true;
