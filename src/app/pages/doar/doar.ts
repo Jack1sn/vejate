@@ -5,17 +5,18 @@ import { loadStripe } from '@stripe/stripe-js';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
 import { inject } from '@angular/core';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-doar',
   standalone: true,
-  imports: [CommonModule, FormsModule, HttpClientModule],
+  imports: [CommonModule, FormsModule, HttpClientModule, RouterModule],
   templateUrl: './doar.html',
   styleUrls: ['./doar.css']
 })
 export class DoarComponent {
 
-  pixChave = 'pix@vejate.com';
+  pixChave = 'jackson@vejate.com';
   pixCopiado = false;
 
   valorDoacao = 0;

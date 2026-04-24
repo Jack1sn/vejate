@@ -1,18 +1,69 @@
-<div class="p-6 max-w-2xl mx-auto">
+<div class="p-6 max-w-1xl mx-auto">
 
-  <h1 class="text-1xl font-bold mb-6 text-center flex items-center justify-center gap-3">
-    <span>🌍 Recargas Internacionais</span>
+ <!-- 🔥 ALERTA CENTRAL (FIXO) -->
+<div *ngIf="mensagem"
+     class="fixed inset-0 flex items-center justify-center z-50">
 
-    <div class="flex gap-1 text-1xl">
+  <!-- FUNDO ESCURO -->
+  <div class="absolute inset-0 bg-black/40"></div>
+
+  <!-- CARD -->
+  <div class="relative w-[90%] max-w-md p-5 rounded-lg shadow-lg
+              border animate-fade-in"
+       [ngClass]="{
+         'bg-green-50 border-green-400 text-green-800': tipoMensagem === 'success',
+         'bg-red-50 border-red-400 text-red-800': tipoMensagem === 'error'
+       }">
+
+    <!-- HEADER -->
+    <div class="flex items-center justify-between mb-2">
+
+      <div class="flex items-center gap-2 font-semibold">
+
+        <i *ngIf="tipoMensagem === 'success'" class="fa-solid fa-circle-check"></i>
+        <i *ngIf="tipoMensagem === 'error'" class="fa-solid fa-triangle-exclamation"></i>
+
+        <span>
+          {{ tipoMensagem === 'success' ? 'Sucesso' : 'Erro' }}
+        </span>
+
+      </div>
+
+      <!-- FECHAR -->
+      <button (click)="mensagem=''" class="text-xl leading-none">
+        ×
+      </button>
+
+    </div>
+
+    <!-- TEXTO -->
+    <div class="text-sm leading-relaxed">
+      {{ mensagem }}
+    </div>
+
+  </div>
+
+</div>
+
+  <!-- 🌍 TÍTULO -->
+  <h1 class="text-lg font-semibold mb-6 text-center flex flex-col items-center gap-2">
+
+    <div class="flex items-center gap-2">
+      <i class="fa-solid fa-globe text-green-600"></i>
+      <span>Recargas Internacionais</span>
+    </div>
+
+    <div class="flex gap-1 text-lg">
       {{ getBandeira('DO') }}
       {{ getBandeira('HT') }}
       {{ getBandeira('CU') }}
       {{ getBandeira('VE') }}
     </div>
+
   </h1>
 
-  <!-- Número -->
-  <div class="flex items-center border rounded p-2 mb-2">
+  <!-- 📞 NÚMERO -->
+  <div class="flex items-center border rounded-lg px-3 py-2 mb-2 shadow-sm focus-within:ring-2 focus-within:ring-green-500">
 
     <span class="text-xl mr-2">
       {{ getBandeira(paisDetectado) }}
@@ -23,41 +74,47 @@
       [(ngModel)]="numero"
       (input)="validarNumero()"
       placeholder="+18095551234"
-      class="w-full outline-none"
+      class="w-full outline-none text-sm"
     />
 
   </div>
 
-  <div *ngIf="numeroValido" class="text-green-600 text-sm mb-4">
-    ✅ Número válido ({{ paisDetectado }})
+  <!-- ✅ VALIDAÇÃO -->
+  <div *ngIf="numeroValido" class="text-green-600 text-sm mb-4 flex items-center gap-2">
+    <i class="fa-solid fa-check-circle"></i>
+    Número válido ({{ paisDetectado }})
   </div>
 
-  <div *ngIf="!numeroValido && numero" class="text-red-500 text-sm mb-4">
-    ❌ Número inválido (use formato +XXX)
+  <div *ngIf="!numeroValido && numero" class="text-red-500 text-sm mb-4 flex items-center gap-2">
+    <i class="fa-solid fa-circle-xmark"></i>
+    Número inválido (use formato +XXX)
   </div>
 
-  <!-- País -->
-  <div *ngIf="paisAtual" class="mb-4 text-sm flex items-center gap-2">
+  <!-- 🌎 PAÍS -->
+  <div *ngIf="paisAtual"
+       class="mb-6 flex items-center justify-center gap-2 text-sm text-gray-700 bg-gray-50 p-3 rounded-lg border">
+
     <span class="text-2xl">
       {{ getBandeira(paisAtual.codigo) }}
     </span>
 
-    <span>
-      <strong>{{ paisAtual.nome }}</strong>
+    <span class="font-medium">
+      {{ paisAtual.nome }}
     </span>
+
   </div>
 
-  <!-- Valores -->
+  <!-- 💳 VALORES -->
   <div class="grid grid-cols-3 gap-3">
 
     <button
       *ngFor="let v of valores"
       (click)="pagar(v)"
-      class="border rounded-lg p-4 hover:bg-green-50 transition"
+      class="border rounded-xl p-4 hover:bg-green-50 hover:shadow-md transition text-center group"
     >
 
-      <!-- 💰 VALOR EM REAL FORMATADO -->
-      <div class="font-bold text-lg">
+      <!-- 💰 VALOR -->
+      <div class="font-semibold text-green-700 text-lg group-hover:scale-105 transition">
         R$ {{ v | number:'1.2-2' }}
       </div>
 

@@ -3,7 +3,7 @@ import { Routes } from '@angular/router';
 // Pages
 import { HomeComponent } from './pages/home/home.component';
 import { LoginComponent } from './pages/login/login';
-import { RegistroComponent } from './pages/registro/registro'; // <-- import do register
+import { RegistroComponent } from './pages/registro/registro';
 import { CalmanteComponent } from './pages/categoria/calmante/calmante';
 import { ClienteComponent } from './pages/cliente/cliente/cliente';
 import { AdminComponent } from './pages/admin/admin/admin';
@@ -11,6 +11,9 @@ import { DoarComponent } from './pages/doar/doar';
 import { DorComponent } from './pages/categoria/dor/dor';
 import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard';
 import { authGuard } from './guards/auth.guard';
+
+// ✅ NOVO COMPONENTE (histórico)
+import { HistoricoRecargasComponent } from './pages/historico-recargas/historico-recargas';
 
 export const routes: Routes = [
   // Página inicial
@@ -25,27 +28,30 @@ export const routes: Routes = [
   { path: 'dor', component: DorComponent },
 
   // Register
-  { path: 'registro', component: RegistroComponent }, // <-- nova rota
+  { path: 'registro', component: RegistroComponent },
 
-  // Categorias (rota dinâmica)
+  // Categorias
   { path: 'categoria/:tipo', component: CalmanteComponent },
 
-  // Área do cliente
+  // Cliente
   { path: 'cliente', component: ClienteComponent },
 
-  // Painel admin
+  // Admin
   { path: 'admin', component: AdminComponent },
 
   {
-  path: 'admin/dashboard',
-  component: AdminDashboardComponent,
-  canActivate: [authGuard],
-   data: { role: 'admin' }
-},
+    path: 'admin/dashboard',
+    component: AdminDashboardComponent,
+    canActivate: [authGuard],
+    data: { role: 'admin' }
+  },
 
-  // Doação
+  // 💳 RECARGA / DOAÇÃO
   { path: 'recargar', component: DoarComponent },
 
-  // Rota inválida (fallback)
+  // 📜 HISTÓRICO DE RECARGAS (NOVO)
+  { path: 'historico-recargas', component: HistoricoRecargasComponent },
+
+  // fallback
   { path: '**', redirectTo: 'home' }
 ];

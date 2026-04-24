@@ -22,6 +22,9 @@ export class CreditoComponent {
   paisDetectado = '';
   paisSelecionado = '';
 
+  mensagem = '';
+  tipoMensagem: 'success' | 'error' | '' = '';
+
   valores = [15,20,25,30,35,40,50,60,70,80,90,100];
 
   paises = [
@@ -31,7 +34,6 @@ export class CreditoComponent {
     { codigo: 'VE', nome: 'Venezuela 🇻🇪', moeda: 'VES', taxa: 8.5 }
   ];
 
-  // 📞 valida número
   validarNumero() {
     const phone = parsePhoneNumberFromString(this.numero);
 
@@ -49,48 +51,75 @@ export class CreditoComponent {
     return this.paises.find(p => p.codigo === this.paisSelecionado);
   }
 
-  // 💱 converter moeda formatado
-converter(valor: number): string {
-  if (!this.paisAtual) return '0.00';
-  return this.formatar(valor * this.paisAtual.taxa);
-}
+  converter(valor: number): number {
+    if (!this.paisAtual) return 0;
+    return valor * this.paisAtual.taxa;
+  }
 
-  // 💰 pegar saldo atual
   get saldo(): number {
     return this.auth.usuario()?.saldo ?? 0;
   }
 
-  // 💳 RECARGA COM VALIDAÇÃO
-  pagar(valor: number) {
+ processando = false; // lock para o processo
 
-    if (!this.numeroValido) {
-      alert('Número inválido');
-      return;
-    }
+pagar(valor: number) {
 
-    const user = this.auth.usuario();
+  if (this.processando) return; // 🚫 evita duplicação
+  this.processando = true;
 
-if (!user) {
-  alert('Usuário não autenticado');
-  return;
-}
-
-// 🔴 VALIDA SALDO
-if (user.saldo < valor) {
-  alert('❌ Saldo insuficiente');
-  return;
-}
-
-// ✅ DESCONTA SALDO
-this.auth.adicionarSaldoUsuario(user.email, -valor);
-
-// ✅ ENVIA RECARGA
-this.recargaService.solicitarRecarga(valor);
-alert(`✅ Recarga enviada com sucesso!\nValor: R$ ${this.formatar(valor)}`);
-    this.limparFormulario();
+  if (!this.numeroValido) {
+    this.mostrarErro('Número inválido');
+    this.processando = false;
+    return;
   }
 
-  // 🧹 limpar formulário
+  const user = this.auth.usuario();
+
+  if (!user) {
+    this.mostrarErro('Usuário não autenticado');
+    this.processando = false;
+    return;
+  }
+
+  if (user.saldo < valor) {
+    this.mostrarErro('Saldo insuficiente');
+    this.processando = false;
+    return;
+  }
+
+  // ✅ desconta saldo
+ // this.auth.adicionarSaldoUsuario(user.email, -valor);
+
+  // ✅ envia recarga
+  this.recargaService.solicitarRecarga(valor);
+
+  this.mostrarSucesso(`Recarga enviada com sucesso! Valor: R$ ${this.formatar(valor)}`);
+
+  this.limparFormulario();
+
+  setTimeout(() => {
+    this.processando = false;
+  }, 1000);
+}
+
+  mostrarSucesso(msg: string) {
+    this.tipoMensagem = 'success';
+    this.mensagem = msg;
+    this.autoFechar();
+  }
+
+  mostrarErro(msg: string) {
+    this.tipoMensagem = 'error';
+    this.mensagem = msg;
+    this.autoFechar();
+  }
+
+  autoFechar() {
+    setTimeout(() => {
+      this.mensagem = '';
+    }, 4000);
+  }
+
   private limparFormulario() {
     this.numero = '';
     this.numeroValido = false;
@@ -109,6 +138,6 @@ alert(`✅ Recarga enviada com sucesso!\nValor: R$ ${this.formatar(valor)}`);
   }
 
   formatar(valor: number): string {
-  return valor.toFixed(2);
-}
+    return valor.toFixed(2);
+  }
 }

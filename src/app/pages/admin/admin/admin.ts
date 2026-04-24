@@ -113,4 +113,8 @@ export class AdminComponent {
 irParaRecargas() {
   this.router.navigate(['/admin/dashboard']);
 }
+
+irParaHistRecargas() {
+  this.router.navigate(['/historico-recargas']);
+}
 }

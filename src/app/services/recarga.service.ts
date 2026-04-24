@@ -13,66 +13,101 @@ export class RecargaService {
 
   constructor(private auth: AuthService) {}
 
-solicitarRecarga(valor: number) {
-  const user = this.auth.getUsuario();
-  if (!user) return;
+  // 🔐 EVITA DUPLA EXECUÇÃO (proteção global)
+  private processando = false;
 
-  const saldo = user.saldo ?? 0;
+  // 💳 SOLICITAR RECARGA (VERSÃO SEGURA + AUDITADA)
+  solicitarRecarga(valor: number) {
 
-  const lista = this.getRecargas();
+    if (this.processando) return;
+    this.processando = true;
 
-  // 🟢 CASO TENHA SALDO
-  if (saldo >= valor) {
-    this.auth.descontarSaldo(valor);
+    const user = this.auth.getUsuario();
+    if (!user) {
+      this.processando = false;
+      return;
+    }
 
-    const nova: Recarga = {
-      id: Date.now().toString(),
-      email: user.email,
-      nome :user.nome,
-      valor,
-      status: 'aprovado',
-      data: new Date()
-    };
+    const saldoAntes = user.saldo ?? 0;
+
+    const lista = this.getRecargas();
+
+    let nova: Recarga;
+
+    // 🟢 TEM SALDO → APROVA AUTOMATICAMENTE
+    if (saldoAntes >= valor) {
+
+      const saldoDepois = saldoAntes - valor;
+
+      this.auth.descontarSaldo(valor);
+
+      nova = {
+        id: Date.now().toString(),
+        email: user.email,
+        nome: user.nome,
+        valor,
+        status: 'aprovado',
+        saldoAntes,
+        saldoDepois,
+        tipo: 'auto',
+        origem: 'web',
+        data: new Date()
+      };
+    }
+
+    // 🟡 SEM SALDO → FICA PENDENTE
+    else {
+      nova = {
+        id: Date.now().toString(),
+        email: user.email,
+        nome: user.nome,
+        valor,
+        status: 'pendente',
+        saldoAntes,
+        saldoDepois: saldoAntes,
+        tipo: 'sistema',
+        origem: 'web',
+        data: new Date()
+      };
+    }
 
     lista.push(nova);
 
     localStorage.setItem(this.STORAGE, JSON.stringify(lista));
     this.recargas.set(lista);
 
-    return;
+    // libera lock
+    setTimeout(() => {
+      this.processando = false;
+    }, 500);
   }
 
-  // 🟡 CASO NÃO TENHA SALDO
-  const nova: Recarga = {
-    id: Date.now().toString(),
-    email: user.email,
-    nome : user.nome,
-    valor,
-    status: 'pendente',
-    data: new Date()
-  };
-
-  lista.push(nova);
-
-  localStorage.setItem(this.STORAGE, JSON.stringify(lista));
-  this.recargas.set(lista);
-}
-
+  // ✅ APROVAR MANUALMENTE
   aprovarRecarga(id: string) {
     const lista = this.getRecargas();
 
     const recarga = lista.find(r => r.id === id);
-    if (!recarga) return;
+    if (!recarga || recarga.status !== 'pendente') return;
+
+    const user = this.auth.getUsuario();
+    if (!user) return;
+
+    const saldoAntes = user.saldo ?? 0;
+    const saldoDepois = saldoAntes + recarga.valor;
 
     recarga.status = 'aprovado';
+    recarga.dataProcessamento = new Date();
 
-    // 🔥 atualiza saldo
     this.auth.adicionarSaldo(recarga.valor);
 
-    localStorage.setItem(this.STORAGE, JSON.stringify(lista));
-    this.recargas.set(lista);
+    this.salvar(lista);
+
+    // atualiza auditoria
+    recarga.saldoAntes = saldoAntes;
+    recarga.saldoDepois = saldoDepois;
   }
 
+  // ❌ REJEITAR
   rejeitarRecarga(id: string) {
     const lista = this.getRecargas();
 
@@ -80,30 +115,35 @@ solicitarRecarga(valor: number) {
     if (!recarga) return;
 
     recarga.status = 'rejeitado';
+    recarga.dataProcessamento = new Date();
 
+    this.salvar(lista);
+  }
+
+  // 📊 FILTRO
+  getRecargasPorStatus(status?: Recarga['status']) {
+    const recargas = this.getRecargas();
+
+    if (!status) return recargas;
+
+    return recargas.filter(r => r.status === status);
+  }
+
+  // 💾 SALVAR CENTRALIZADO
+  private salvar(lista: Recarga[]) {
     localStorage.setItem(this.STORAGE, JSON.stringify(lista));
     this.recargas.set(lista);
   }
 
+  // 📦 LOAD COM FIX DATE
   private getRecargas(): Recarga[] {
     const data = localStorage.getItem(this.STORAGE);
-
     if (!data) return [];
 
-    const parsed = JSON.parse(data);
-
-    // 🔥 corrige Date (muito importante)
-    return parsed.map((r: any) => ({
+    return JSON.parse(data).map((r: any) => ({
       ...r,
-      data: new Date(r.data)
+      data: new Date(r.data),
+      dataProcessamento: r.dataProcessamento ? new Date(r.dataProcessamento) : undefined
     }));
   }
-
-  getRecargasPorStatus(status?: string) {
-  const recargas = this.getRecargas();
-
-  if (!status) return recargas;
-
-  return recargas.filter(r => r.status === status);
-}
 }
