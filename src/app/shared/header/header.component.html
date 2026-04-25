@@ -28,23 +28,19 @@
       </a>
 
       <a routerLink="/cliente" class="flex items-center gap-2 hover:text-green-500 transition">
-        <i class="fa-solid fa-list text-xs"></i> Todos
+        <i class="fa-solid fa-list text-xs"></i> Saude
       </a>
 
-      <a routerLink="/categoria/imunidade" class="flex items-center gap-2 hover:text-green-500 transition">
-        <i class="fa-solid fa-shield-heart text-xs"></i> Imunidade
-      </a>
+    
 
       <a routerLink="/categoria/calmante" class="flex items-center gap-2 hover:text-green-500 transition">
-        <i class="fa-solid fa-spa text-xs"></i> Calmante
+        <i class="fa-solid fa-spa text-xs"></i> Certidões
       </a>
 
-      <a routerLink="/categoria/foco" class="flex items-center gap-2 hover:text-green-500 transition">
-        <i class="fa-solid fa-bullseye text-xs"></i> Foco
-      </a>
+     
 
       <a routerLink="/categoria/digestao" class="flex items-center gap-2 hover:text-green-500 transition">
-        <i class="fa-solid fa-utensils text-xs"></i> Digestão
+        <i class="fa-solid fa-utensils text-xs"></i> Traduçôes
       </a>
 
       <a routerLink="/categoria/dor" class="flex items-center gap-2 hover:text-green-500 transition">
@@ -101,7 +97,7 @@
         <!-- USER -->
         <span class="flex items-center gap-2">
           <i class="fa-solid fa-user text-xs"></i>
-          {{ nomeUsuario() }}
+          {{ nomeUsuario()?.nome }}
         </span>
 
         <!-- LOGOUT -->
@@ -146,23 +142,17 @@
     </a>
 
     <a routerLink="/cliente" (click)="toggleMenu()" class="flex items-center gap-2 hover:text-green-500">
-      <i class="fa-solid fa-list text-xs"></i> Todos
+      <i class="fa-solid fa-list text-xs"></i> Saude
     </a>
 
     <a routerLink="/categoria/imunidade" (click)="toggleMenu()" class="flex items-center gap-2 hover:text-green-500">
-      <i class="fa-solid fa-shield-heart text-xs"></i> Imunidade
+      <i class="fa-solid fa-shield-heart text-xs"></i> Certidões HT
     </a>
 
-    <a routerLink="/categoria/calmante" (click)="toggleMenu()" class="flex items-center gap-2 hover:text-green-500">
-      <i class="fa-solid fa-spa text-xs"></i> Calmante
-    </a>
-
-    <a routerLink="/categoria/foco" (click)="toggleMenu()" class="flex items-center gap-2 hover:text-green-500">
-      <i class="fa-solid fa-bullseye text-xs"></i> Foco
-    </a>
+    
 
     <a routerLink="/categoria/digestao" (click)="toggleMenu()" class="flex items-center gap-2 hover:text-green-500">
-      <i class="fa-solid fa-utensils text-xs"></i> Digestão
+      <i class="fa-solid fa-utensils text-xs"></i> Traduções
     </a>
 
     <a routerLink="/categoria/dor" (click)="toggleMenu()" class="flex items-center gap-2 hover:text-green-500">

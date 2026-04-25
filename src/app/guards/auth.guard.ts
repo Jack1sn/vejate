@@ -19,7 +19,7 @@ export const authGuard: CanActivateFn = (route): boolean | UrlTree => {
   if (roleEsperada && usuario.role !== roleEsperada) {
 
     // admin sempre vai pro dashboard
-    if (usuario.role === 'admin') {
+    if (usuario.role === 'ADMIN') {
       return router.createUrlTree(['/admin/dashboard']);
     }
 

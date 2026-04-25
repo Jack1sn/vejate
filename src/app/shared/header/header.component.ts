@@ -34,7 +34,7 @@ export class HeaderComponent {
   ehAdmin = this.auth.ehAdmin;
 
   // 👉 NOVO: nome pronto pro header
-  nomeUsuario = this.auth.nomeUsuario;
+  nomeUsuario = this.auth.usuario;
 
   // 🔔 Notificações
   notificacoes = this.notificacaoService.notificacoes;

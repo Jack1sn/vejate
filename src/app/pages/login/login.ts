@@ -22,26 +22,20 @@ export class LoginComponent {
   senha = '';
   erro = '';
 
-  login() {
-    this.erro = '';
+login() {
+  this.erro = '';
 
-    // Tenta autenticar com o AuthService
-    const sucesso = this.auth.login(this.email, this.senha);
-
-    if (sucesso) {
-      // Pega o usuário logado
-      const usuario = this.auth.getUsuario();
-
-      if (!usuario) return;
-
-      // Redireciona conforme role
-      if (usuario.role === 'admin') {
+  this.auth.login(this.email, this.senha).subscribe({
+    next: (usuario) => {
+      if (usuario.role === 'ADMIN') {
         this.router.navigate(['/admin']);
-      } else if (usuario.role === 'cliente') {
+      } else {
         this.router.navigate(['/cliente']);
       }
-    } else {
+    },
+    error: () => {
       this.erro = 'Email ou senha inválidos.';
     }
-  }
+  });
+}
 }

@@ -17,10 +17,10 @@ export class AdminComponent {
   private auth = inject(AuthService);
   private receitaService = inject(ReceitaService);
 
-  // View atual: dashboard ou receitas
+  // 📌 view atual
   view = signal<'dashboard' | 'receitas' | 'admin/dashboard'>('dashboard');
 
-  // Form fields
+  // 📌 form
   titulo = '';
   descricao = '';
   categoria = '';
@@ -29,23 +29,24 @@ export class AdminComponent {
   etapaMedida = '';
   editId: number | null = null;
 
-  // Lista de receitas
+  // 📌 receitas (garantindo tipo seguro)
   receitas = this.receitaService.receitas;
 
-  // Computed: total de receitas
-  totalReceitas = computed(() => this.receitas().length);
+  // 📊 total receitas
+  totalReceitas = computed(() => this.receitas().length ?? 0);
 
-  // Alterna view
+  // 🔄 troca view
   setView(tipo: 'dashboard' | 'receitas' | 'admin/dashboard') {
     this.view.set(tipo);
   }
 
+  // 🚪 logout
   logout() {
     this.auth.logout();
     this.router.navigate(['/home']);
   }
 
-  /** Adiciona etapa de preparo ao formulário */
+  /** ➕ adiciona etapa */
   adicionarEtapa() {
     if (!this.etapaDescricao.trim()) return;
 
@@ -58,23 +59,34 @@ export class AdminComponent {
     this.etapaMedida = '';
   }
 
-  /** Remove etapa pelo índice */
+  /** ❌ remove etapa */
   removerEtapa(index: number) {
     this.modoPreparo.splice(index, 1);
   }
 
-  /** Prepara a edição de uma receita existente */
-  editar(receita: any) {
+  /** ✏️ editar receita (TIPADO CORRETO) */
+  editar(receita: {
+    id: number;
+    titulo: string;
+    descricao: string;
+    categoria: string;
+    modoPreparo: EtapaPreparo[];
+  }) {
     this.editId = receita.id;
     this.titulo = receita.titulo;
     this.descricao = receita.descricao;
     this.categoria = receita.categoria;
-    this.modoPreparo = [...receita.modoPreparo]; // copia para edição
+    this.modoPreparo = [...receita.modoPreparo];
   }
 
-  /** Salva receita nova ou atualiza existente */
+  /** 💾 salvar */
   salvar() {
-    if (!this.titulo.trim() || !this.descricao.trim() || !this.categoria || this.modoPreparo.length === 0) return;
+    if (
+      !this.titulo.trim() ||
+      !this.descricao.trim() ||
+      !this.categoria ||
+      this.modoPreparo.length === 0
+    ) return;
 
     const receitaCompleta = {
       titulo: this.titulo,
@@ -84,7 +96,10 @@ export class AdminComponent {
     };
 
     if (this.editId !== null) {
-      this.receitaService.editar({ id: this.editId, ...receitaCompleta });
+      this.receitaService.editar({
+        id: this.editId,
+        ...receitaCompleta
+      });
     } else {
       this.receitaService.adicionar(receitaCompleta);
     }
@@ -92,7 +107,7 @@ export class AdminComponent {
     this.cancelar();
   }
 
-  /** Cancela edição e limpa formulário */
+  /** 🧹 reset */
   cancelar() {
     this.editId = null;
     this.titulo = '';
@@ -103,18 +118,17 @@ export class AdminComponent {
     this.etapaMedida = '';
   }
 
-  /** Remove receita pelo id */
+  /** 🗑 remover */
   remover(id: number) {
     this.receitaService.remover(id);
   }
 
- 
+  // 🔁 navegação
+  irParaRecargas() {
+    this.router.navigate(['/admin/dashboard']);
+  }
 
-irParaRecargas() {
-  this.router.navigate(['/admin/dashboard']);
-}
-
-irParaHistRecargas() {
-  this.router.navigate(['/historico-recargas']);
-}
+  irParaHistRecargas() {
+    this.router.navigate(['/historico-recargas']);
+  }
 }

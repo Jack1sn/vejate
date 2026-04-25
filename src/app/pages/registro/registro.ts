@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { Router, RouterModule } from '@angular/router';
 import { FooterComponent } from "../footer/footer";
+import { UsuarioService } from '../../services/usuario.service';
 
 @Component({
   selector: 'app-registro',
@@ -29,7 +30,8 @@ export class RegistroComponent {
   contador = 60;
   intervalo: any;
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router,
+     private usuarioService: UsuarioService ) {}
 
   buscarCep() {
     if (this.cep.length !== 8) {
@@ -58,26 +60,38 @@ export class RegistroComponent {
       });
   }
 
-  registrar() {
-    if (!this.nome || !this.email || !this.cep) {
-      this.erro = 'Preencha todos os campos obrigatórios.';
-      return;
-    }
+ registrar() {
 
-    this.erro = '';
-    this.mensagem =
-      'Cadastro realizado com sucesso! Uma senha temporária foi enviada para o email informado.';
-
-    this.redirecionando = true;
-
-    // Inicia contador regressivo
-    this.intervalo = setInterval(() => {
-      this.contador--;
-
-      if (this.contador === 0) {
-        clearInterval(this.intervalo);
-        this.router.navigate(['/login']);
-      }
-    }, 200);
+  if (!this.nome || !this.email || !this.cep) {
+    this.erro = 'Preencha todos os campos obrigatórios.';
+    return;
   }
+
+  this.erro = '';
+
+  const novoUsuario = {
+    nome: this.nome,
+    email: this.email,
+    senha: '123456' // depois você melhora isso
+  };
+
+  this.usuarioService.cadastrar(novoUsuario).subscribe({
+    next: () => {
+      this.mensagem = 'Cadastro realizado com sucesso!';
+      this.redirecionando = true;
+
+      this.intervalo = setInterval(() => {
+        this.contador--;
+
+        if (this.contador === 0) {
+          clearInterval(this.intervalo);
+          this.router.navigate(['/login']);
+        }
+      }, 1000);
+    },
+    error: (err) => {
+      this.erro = err.error?.message || 'Erro ao cadastrar usuário';
+    }
+  });
+}
 }

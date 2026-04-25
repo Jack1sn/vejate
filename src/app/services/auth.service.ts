@@ -1,11 +1,14 @@
 import { Injectable, signal, computed } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { tap } from 'rxjs';
+import { Observable } from 'rxjs';
 
 export interface Usuario {
+  id?: string;
   nome: string;
   email: string;
-  senha: string;
+  role: 'ADMIN' | 'CLIENTE' | string;
   saldo: number;
-  role: 'admin' | 'cliente';
 }
 
 @Injectable({
@@ -13,227 +16,77 @@ export interface Usuario {
 })
 export class AuthService {
 
-  private readonly STORAGE_KEY = 'vejate_user';
-  private readonly STORAGE_USERS = 'vejate_users';
+  private API = 'http://localhost:8080/api';
 
-  private usuarioSignal = signal<Usuario | null>(this.getUsuarioFromStorage());
+  private usuarioSignal = signal<Usuario | null>(null);
 
-  // 🔥 Computeds
   usuario = computed(() => this.usuarioSignal());
   estaLogado = computed(() => !!this.usuarioSignal());
-  ehAdmin = computed(() => this.usuarioSignal()?.role === 'admin');
+  ehAdmin = computed(() => this.usuarioSignal()?.role === 'ADMIN');
+  nomeUsuario = computed(() => this.usuarioSignal());
 
-  nomeUsuario = computed(() => {
-    const user = this.usuarioSignal();
-    if (!user) return '';
-    return user.nome?.split(' ')[0] || user.email.split('@')[0];
-  });
-
-  constructor() {
-    const usuarios = this.getUsuariosCadastrados();
-
-    // Admin padrão
-    if (!usuarios.find(u => u.email === 'admin@vejate.com')) {
-      this.salvarUsuario({
-        nome: 'Administrador',
-        email: 'admin@vejate.com',
-        senha: '123',
-        role: 'admin',
-        saldo: 0
-      });
-    }
-
-    // Cliente padrão
-    if (!usuarios.find(u => u.email === 'cliente@vejate.com')) {
-      this.salvarUsuario({
-        nome: 'Cliente Teste',
-        email: 'cliente@vejate.com',
-        senha: '123',
-        role: 'cliente',
-        saldo: 50
-      });
+  constructor(private http: HttpClient) {
+    const saved = localStorage.getItem('user');
+    if (saved) {
+      this.usuarioSignal.set(JSON.parse(saved));
     }
   }
 
-  /**
-   * 🔐 Login
-   */
-  login(email: string, senha: string): boolean {
-    const usuarios = this.getUsuariosCadastrados();
-
-    const usuario = usuarios.find(
-      u => u.email === email && u.senha === senha
+  // ================= LOGIN =================
+  login(email: string, senha: string) {
+    return this.http.post<Usuario>(
+      `${this.API}/auth/login`,
+      { email, senha }
+    ).pipe(
+      tap(user => {
+        this.usuarioSignal.set(user);
+        localStorage.setItem('user', JSON.stringify(user));
+      })
     );
-
-    if (!usuario) return false;
-
-    const usuarioSeguro: Usuario = {
-      ...usuario,
-      nome: usuario.nome ?? email.split('@')[0],
-      saldo: usuario.saldo ?? 0
-    };
-
-    this.usuarioSignal.set(usuarioSeguro);
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(usuarioSeguro));
-
-    return true;
   }
 
-  /**
-   * 🚪 Logout
-   */
+  // ================= LOGOUT =================
   logout() {
     this.usuarioSignal.set(null);
-    localStorage.removeItem(this.STORAGE_KEY);
+    localStorage.removeItem('user');
   }
 
-  /**
-   * 📝 Cadastro
-   */
-  cadastrarCliente(nome: string, email: string, senha: string): boolean {
-    const usuarios = this.getUsuariosCadastrados();
-
-    if (usuarios.find(u => u.email === email)) {
-      return false;
-    }
-
-    const novoUsuario: Usuario = {
-      nome,
-      email,
-      senha,
-      role: 'cliente',
-      saldo: 0
-    };
-
-    this.salvarUsuario(novoUsuario);
-    return true;
-  }
-
-  /**
-   * 💰 ADICIONAR SALDO (usado pelo gerente)
-   */
-  adicionarSaldo(valor: number) {
-    const user = this.usuarioSignal();
-
-    if (!user) return;
-
-    if (valor <= 0) return; // proteção básica
-
-    const atualizado: Usuario = {
-      ...user,
-      saldo: (user.saldo || 0) + valor
-    };
-
-    this.usuarioSignal.set(atualizado);
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(atualizado));
-
-    this.atualizarListaUsuarios(atualizado);
-  }
-
-  /**
-   * 💸 DESCONTAR SALDO (quando cliente usa)
-   */
-  descontarSaldo(valor: number): boolean {
-    const user = this.usuarioSignal();
-
-    if (!user) return false;
-
-    if (valor <= 0) return false;
-
-    if ((user.saldo || 0) < valor) {
-      return false; // saldo insuficiente
-    }
-
-    const atualizado: Usuario = {
-      ...user,
-      saldo: user.saldo - valor
-    };
-
-    this.usuarioSignal.set(atualizado);
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(atualizado));
-
-    this.atualizarListaUsuarios(atualizado);
-
-    return true;
-  }
-
-  /**
-   * 🔄 Atualiza usuário na lista geral
-   */
-  private atualizarListaUsuarios(usuarioAtualizado: Usuario) {
-    const usuarios = this.getUsuariosCadastrados();
-
-    const index = usuarios.findIndex(u => u.email === usuarioAtualizado.email);
-
-    if (index !== -1) {
-      usuarios[index] = usuarioAtualizado;
-      localStorage.setItem(this.STORAGE_USERS, JSON.stringify(usuarios));
-    }
-  }
-
-  /**
-   * 👤 Recupera usuário logado
-   */
-  private getUsuarioFromStorage(): Usuario | null {
-    const data = localStorage.getItem(this.STORAGE_KEY);
-
-    if (!data) return null;
-
-    try {
-      const user = JSON.parse(data);
-
-      return {
-        ...user,
-        nome: user.nome ?? user.email?.split('@')[0],
-        saldo: user.saldo ?? 0
-      };
-    } catch {
-      return null;
-    }
-  }
-
-  /**
-   * 👥 Lista de usuários
-   */
-  private getUsuariosCadastrados(): Usuario[] {
-    const data = localStorage.getItem(this.STORAGE_USERS);
-    return data ? JSON.parse(data) : [];
-  }
-
-  /**
-   * 💾 Salvar usuário
-   */
-  private salvarUsuario(usuario: Usuario) {
-    const usuarios = this.getUsuariosCadastrados();
-    usuarios.push(usuario);
-    localStorage.setItem(this.STORAGE_USERS, JSON.stringify(usuarios));
-  }
-
-  /**
-   * 👀 Método clássico
-   */
+  // ================= GET =================
   getUsuario(): Usuario | null {
     return this.usuarioSignal();
   }
 
-  adicionarSaldoUsuario(email: string, valor: number) {
-  const usuarios = this.getUsuariosCadastrados();
+  // ================= SALDO (BACKEND) =================
 
-  const index = usuarios.findIndex(u => u.email === email);
-
-  if (index === -1) return;
-
-  usuarios[index].saldo = (usuarios[index].saldo ?? 0) + valor;
-
-  localStorage.setItem(this.STORAGE_USERS, JSON.stringify(usuarios));
-
-  // atualiza se for o usuário logado
-  const atual = this.usuarioSignal();
-  if (atual?.email === email) {
-    this.usuarioSignal.set({
-      ...atual,
-      saldo: usuarios[index].saldo
-    });
+  // ➕ adicionar saldo (admin)
+  adicionarSaldoUsuario(email: string, valor: number): Observable<Usuario> {
+    return this.http.put<Usuario>(
+      `${this.API}/usuarios/saldo`,
+      { email, valor }
+    ).pipe(
+      tap(userAtualizado => {
+        // atualiza local se for o mesmo usuário logado
+        const atual = this.usuarioSignal();
+        if (atual?.email === email) {
+          this.usuarioSignal.set(userAtualizado);
+          localStorage.setItem('user', JSON.stringify(userAtualizado));
+        }
+      })
+    );
   }
-}
+
+  // 🔄 atualizar usuário do backend (sync)
+  atualizarUsuario(): Observable<Usuario> {
+    const user = this.usuarioSignal();
+    if (!user?.email) throw new Error('Usuário não logado');
+
+    return this.http.get<Usuario>(
+      `${this.API}/usuarios/email/${user.email}`
+    ).pipe(
+      tap(u => {
+        this.usuarioSignal.set(u);
+        localStorage.setItem('user', JSON.stringify(u));
+      })
+    );
+  }
 }
