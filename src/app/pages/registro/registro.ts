@@ -60,7 +60,7 @@ export class RegistroComponent {
       });
   }
 
- registrar() {
+registrar() {
 
   if (!this.nome || !this.email || !this.cep) {
     this.erro = 'Preencha todos os campos obrigatórios.';
@@ -72,26 +72,38 @@ export class RegistroComponent {
   const novoUsuario = {
     nome: this.nome,
     email: this.email,
-    senha: '123456' // depois você melhora isso
+    senha: '$2a$10$YRP/CnbL/cKy8nVUf1jQhul0dNuYfY09YP3uLBhtRTv9Sx1.yTJw.',
+    cep: this.cep,
+    logradouro: this.logradouro,
+    bairro: this.bairro,
+    cidade: this.cidade,
+    estado: this.estado
   };
 
   this.usuarioService.cadastrar(novoUsuario).subscribe({
     next: () => {
-      this.mensagem = 'Cadastro realizado com sucesso!';
-      this.redirecionando = true;
 
-      this.intervalo = setInterval(() => {
-        this.contador--;
+      // 🔥 mostra sucesso primeiro
+      this.mensagem = 'Cadastro realizado com sucesso! Redirecionando para login...';
 
-        if (this.contador === 0) {
-          clearInterval(this.intervalo);
-          this.router.navigate(['/login']);
-        }
-      }, 1000);
+      // limpa erro
+      this.erro = '';
+
+      // ⏳ espera usuário ver a mensagem
+      setTimeout(() => {
+        this.router.navigate(['/login']);
+      }, 3500);
+
     },
     error: (err) => {
       this.erro = err.error?.message || 'Erro ao cadastrar usuário';
+      this.mensagem = '';
     }
   });
+
+  
 }
+
+
+
 }

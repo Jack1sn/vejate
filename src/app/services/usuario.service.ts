@@ -13,7 +13,7 @@ export interface UsuarioRequest {
 })
 export class UsuarioService {
 
-  private API = 'http://localhost:8080/api/auth';
+  private API = 'http://localhost:8080/api/usuarios';
 
   constructor(private http: HttpClient) {}
 
@@ -25,4 +25,5 @@ export class UsuarioService {
     return this.http.get<any[]>(this.API);
     
   }
+  
 }

@@ -68,20 +68,24 @@
       </div>
     </div>
 
-    <!-- Erro -->
-    <div *ngIf="erro" class="text-red-500 mb-3">
-      {{ erro }}
-    </div>
+  <!-- SUCESSO -->
+<div *ngIf="mensagem" class="alert alert-success alert-dismissible fade show" role="alert">
+  {{ mensagem }}
+  <button type="button" class="btn-close" (click)="mensagem=''"></button>
+</div>
 
-    <!-- Sucesso -->
-    <div *ngIf="mensagem" class="text-green-600 mb-3">
-      {{ mensagem }}
-    </div>
+<!-- ERRO -->
+<div *ngIf="erro" class="alert alert-danger alert-dismissible fade show" role="alert">
+  {{ erro }}
+  <button type="button" class="btn-close" (click)="erro=''"></button>
+</div>
 
     <button (click)="registrar()"
             class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition">
       Cadastrar
     </button>
+
+  
   </div>
 </div>
 <app-footer></app-footer>

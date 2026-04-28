@@ -94,17 +94,24 @@ export class CreditoComponent {
 
     // 🚀 CHAMADA PARA BACKEND (SPRING BOOT)
     this.recargaService
-      .solicitarRecarga(valor, user.email, user.nome)
+      .solicitarRecarga(valor )
       .subscribe({
         next: (res) => {
-          this.mostrarSucesso(
-            `Recarga enviada com sucesso! Valor: R$ ${this.formatar(valor)}`
-          );
+       
+  // 🔥 ATUALIZA SALDO NO HEADER NA HORA
+  if (res.saldoDepois !== undefined) {
+  this.auth.atualizarSaldo(res.saldoDepois);
+
+
+  this.mostrarSucesso(
+    `Recarga enviada com sucesso! Valor: R$ ${this.formatar(valor)}`
+  );
 
          // só feedback visual
         this.mostrarSucesso(
         `Recarga enviada com sucesso! Valor: R$ ${this.formatar(valor)}`
 );
+  }
 
           this.limparFormulario();
           this.processando = false;

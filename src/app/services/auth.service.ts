@@ -89,4 +89,19 @@ export class AuthService {
       })
     );
   }
+
+  // 🔥 atualização imediata do saldo (tempo real)
+atualizarSaldo(novoSaldo: number) {
+  const user = this.usuarioSignal();
+
+  if (!user) return;
+
+  const atualizado: Usuario = {
+    ...user,
+    saldo: novoSaldo
+  };
+
+  this.usuarioSignal.set(atualizado);
+  localStorage.setItem('user', JSON.stringify(atualizado));
+}
 }

@@ -17,9 +17,11 @@
     <div *ngIf="erro" class="text-red-500 mb-4">{{ erro }}</div>
 
     <button (click)="login()"
-            class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition">
-      Entrar
-    </button>
+            class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition" [disabled]="carregando">
+      {{ carregando ? 'Entrando...' : 'Entrar' }}
+    
+  
+</button>
 
     <!-- 🔽 Link de Registro -->
     <div class="mt-4 text-center">
