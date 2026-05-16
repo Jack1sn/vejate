@@ -1,36 +1,55 @@
 export interface Recarga {
+
+  // =========================
+  // IDENTIFICAÇÃO
+  // =========================
   id: string;
 
-  // 👤 usuário
-  email: string;
-  nome: string;
+  // =========================
+  // USUÁRIO
+  // =========================
+  usuarioId: string;
+  email?: string;
+  nome?: string;
 
-  // 💰 valores
+  // =========================
+  // DADOS DA RECARGA
+  // =========================
+  numero: string;
   valor: number;
-  moeda?: string; // opcional (BRL, USD etc)
+  moeda: string;
 
-  // 📌 status do fluxo
-  status: 'pendente' | 'aprovado' | 'rejeitado';
+  status: 'PENDENTE' | 'APROVADO' | 'REJEITADO';
 
-  // 📎 comprovante (pix, upload, etc)
+  tipo: 'MANUAL' | 'AUTO' | 'SISTEMA';
+
+  origem?: string;
+
+  // =========================
+  // AUDITORIA DE SALDO
+  // =========================
+  saldo?: number;
+  
+
+  // =========================
+  // COMPROVANTE
+  // =========================
   comprovante?: string;
 
-  // 🧠 auditoria básica
-  saldoAntes?: number;
-  saldoDepois?: number;
-
-  // 📊 rastreio
-  tipo?: 'auto' | 'manual' | 'sistema';
-
-  // 🌍 contexto
-  origem?: string; // ex: "mobile", "web", "admin"
-  ip?: string; // futuro backend
+  // =========================
+  // CONTEXTO
+  // =========================
+  ip?: string;
   userAgent?: string;
 
-  // 📅 datas
-  data: Date;
-  dataProcessamento?: Date;
+  // =========================
+  // DATAS (IMPORTANTE: STRING!)
+  // =========================
+  data: string;
+  dataProcessamento?: string;
 
-  // 📝 observações internas
+  // =========================
+  // OBSERVAÇÃO
+  // =========================
   observacao?: string;
 }

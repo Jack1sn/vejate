@@ -175,7 +175,8 @@
   <span>
     R$
     <span *ngIf="mostrarSaldo">
-      {{ auth.usuario()?.saldo | number:'1.2-2' }}
+       {{ auth.usuario()?.saldo | number:'1.2-2' }}
+      
     </span>
     <span *ngIf="!mostrarSaldo">
       ****

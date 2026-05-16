@@ -66,7 +66,7 @@ export class CreditoComponent {
     return this.auth.usuario()?.saldo ?? 0;
   }
 
-  // 💳 PAGAMENTO (BACKEND REAL)
+  // 💳 PAGAMENTO (CORRIGIDO COM BACKEND UUID)
   pagar(valor: number) {
 
     if (this.processando) return;
@@ -92,37 +92,39 @@ export class CreditoComponent {
       return;
     }
 
-    // 🚀 CHAMADA PARA BACKEND (SPRING BOOT)
-    this.recargaService
-      .solicitarRecarga(valor )
-      .subscribe({
-        next: (res) => {
-       
-  // 🔥 ATUALIZA SALDO NO HEADER NA HORA
-  if (res.saldoDepois !== undefined) {
-  this.auth.atualizarSaldo(res.saldoDepois);
+    // 🔥 PAYLOAD CORRETO PARA O SPRING BOOT
+    const request = {
+               // UUID vindo do login
+      numero: this.numero,
+      valor: valor,
+      moeda: this.paisAtual?.moeda ?? 'BRL',
+      origem: 'WEB',
+      comprovante: null
+    };
 
+    // 🚀 CHAMADA BACKEND
+    this.recargaService.solicitarRecarga(request).subscribe({
+      next: (res) => {
 
-  this.mostrarSucesso(
-    `Recarga enviada com sucesso! Valor: R$ ${this.formatar(valor)}`
-  );
-
-         // só feedback visual
-        this.mostrarSucesso(
-        `Recarga enviada com sucesso! Valor: R$ ${this.formatar(valor)}`
-);
-  }
-
-          this.limparFormulario();
-          this.processando = false;
-        },
-
-        error: (err) => {
-          console.error(err);
-          this.mostrarErro('Erro ao processar recarga');
-          this.processando = false;
+        // 🔥 atualiza saldo imediatamente
+        if (res.saldo !== undefined) {
+          this.auth.atualizarSaldo(res.saldo);
         }
-      });
+
+        this.mostrarSucesso(
+          `Recarga enviada com sucesso! Valor: R$ ${this.formatar(valor)}`
+        );
+
+        this.limparFormulario();
+        this.processando = false;
+      },
+
+      error: (err) => {
+        console.error(err);
+        this.mostrarErro('Erro ao processar recarga');
+        this.processando = false;
+      }
+    });
   }
 
   // ✅ sucesso

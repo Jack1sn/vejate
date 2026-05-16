@@ -1,27 +1,48 @@
 <div class="max-w-4xl mx-auto p-4">
 
   <!-- TÍTULO -->
-  <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+  <h2 class="text-xl font-bold mb-2 flex items-center gap-2">
     <i class="fa-solid fa-receipt text-green-600"></i>
     Histórico de Recargas
   </h2>
 
+  <!-- ⏱️ ÚLTIMA ATUALIZAÇÃO -->
+  <div class="text-xs text-gray-400 mb-4">
+    Atualizado em {{ ultimaAtualizacao | date:'shortTime' }}
+  </div>
+
   <!-- 🔍 FILTROS STATUS -->
   <div class="flex flex-wrap gap-2 mb-3">
 
-    <button (click)="filtroStatus='todos'" class="px-3 py-1 border rounded">
+    <button 
+      (click)="filtroStatus='todos'; aplicarFiltros()"
+      class="px-3 py-1 border rounded"
+      [class.bg-gray-200]="filtroStatus==='todos'"
+    >
       Todos
     </button>
 
-    <button (click)="filtroStatus='aprovado'" class="px-3 py-1 border rounded text-green-600">
+    <button 
+      (click)="filtroStatus='APROVADO'; aplicarFiltros()"
+      class="px-3 py-1 border rounded text-green-600"
+      [class.bg-green-100]="filtroStatus==='APROVADO'"
+    >
       Aprovados
     </button>
 
-    <button (click)="filtroStatus='pendente'" class="px-3 py-1 border rounded text-yellow-600">
+    <button 
+      (click)="filtroStatus='PENDENTE'; aplicarFiltros()"
+      class="px-3 py-1 border rounded text-yellow-600"
+      [class.bg-yellow-100]="filtroStatus==='PENDENTE'"
+    >
       Pendentes
     </button>
 
-    <button (click)="filtroStatus='rejeitado'" class="px-3 py-1 border rounded text-red-600">
+    <button 
+      (click)="filtroStatus='REJEITADO'; aplicarFiltros()"
+      class="px-3 py-1 border rounded text-red-600"
+      [class.bg-red-100]="filtroStatus==='REJEITADO'"
+    >
       Rejeitados
     </button>
 
@@ -29,18 +50,23 @@
 
   <!-- ADMIN FILTRO -->
   <div *ngIf="isAdmin" class="mb-4">
-
     <input
       type="text"
       [(ngModel)]="filtroUsuario"
+      (input)="aplicarFiltros()"
       placeholder="🔎 Filtrar por email ou nome do cliente"
       class="w-full border rounded px-3 py-2 text-sm"
     />
+  </div>
 
+  <!-- 📭 SEM RESULTADOS -->
+  <div *ngIf="recargasFiltradas.length === 0"
+       class="text-center text-gray-400 py-10">
+    Nenhuma recarga encontrada
   </div>
 
   <!-- LISTA -->
-  <div *ngFor="let r of recargas"
+  <div *ngFor="let r of recargasFiltradas; trackBy: trackById"
        class="border rounded-lg p-4 mb-3 bg-white shadow-sm">
 
     <!-- TOPO -->
@@ -61,6 +87,10 @@
     <div class="text-xs text-gray-600 mt-2 space-y-1">
       <div>👤 {{ r.nome }}</div>
       <div>📧 {{ r.email }}</div>
+
+      <!-- 📱 NOVO: NÚMERO RECARGADO -->
+      <div>📱 {{ r.numero }}</div>
+
       <div>📅 {{ r.data | date:'short' }}</div>
     </div>
 
@@ -76,12 +106,12 @@
         Imprimir
       </button>
 
-      <!-- 📲 WHATSAPP -->
+      <!-- 🔗 COMPARTILHAR (GENÉRICO) -->
       <button
-        (click)="compartilharWhatsApp(r)"
-        class="flex-1 bg-green-600 hover:bg-green-700 text-white text-xs py-2 rounded flex items-center justify-center gap-1"
+        (click)="compartilharRecarga(r)"
+        class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-xs py-2 rounded flex items-center justify-center gap-1"
       >
-        <i class="fa-brands fa-whatsapp"></i>
+        <i class="fa-solid fa-share-nodes"></i>
         Compartilhar
       </button>
 

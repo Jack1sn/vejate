@@ -43,7 +43,7 @@ export const routes: Routes = [
     path: 'admin/dashboard',
     component: AdminDashboardComponent,
     canActivate: [authGuard],
-    data: { role: 'admin' }
+    data: { role: 'ADMIN' }
   },
 
   // 💳 RECARGA / DOAÇÃO

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Router, RouterModule } from '@angular/router';
 import { FooterComponent } from "../footer/footer";
 import { UsuarioService } from '../../services/usuario.service';
@@ -9,7 +9,7 @@ import { UsuarioService } from '../../services/usuario.service';
 @Component({
   selector: 'app-registro',
   standalone: true,
-  imports: [CommonModule, FormsModule, HttpClientModule, FooterComponent,RouterModule],
+  imports: [CommonModule, FormsModule, FooterComponent, RouterModule],
   templateUrl: './registro.html',
   styleUrls: ['./registro.css']
 })
@@ -18,6 +18,7 @@ export class RegistroComponent {
   nome = '';
   email = '';
   cep = '';
+
   logradouro = '';
   bairro = '';
   cidade = '';
@@ -26,14 +27,23 @@ export class RegistroComponent {
   mensagem = '';
   erro = '';
 
-  redirecionando = false;
-  contador = 60;
-  intervalo: any;
+  carregando = false;
 
-  constructor(private http: HttpClient, private router: Router,
-     private usuarioService: UsuarioService ) {}
+  // 🔥 senha fixa para testes (mantida como você pediu)
+  private senhaTeste = '123456';
 
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private usuarioService: UsuarioService
+  ) {}
+
+  // =========================
+  // BUSCAR CEP
+  // =========================
   buscarCep() {
+    this.cep = this.cep.replace(/\D/g, '');
+
     if (this.cep.length !== 8) {
       this.erro = 'CEP deve conter 8 números.';
       return;
@@ -60,50 +70,47 @@ export class RegistroComponent {
       });
   }
 
-registrar() {
+  // =========================
+  // REGISTRAR
+  // =========================
+  registrar() {
 
-  if (!this.nome || !this.email || !this.cep) {
-    this.erro = 'Preencha todos os campos obrigatórios.';
-    return;
-  }
-
-  this.erro = '';
-
-  const novoUsuario = {
-    nome: this.nome,
-    email: this.email,
-    senha: '$2a$10$YRP/CnbL/cKy8nVUf1jQhul0dNuYfY09YP3uLBhtRTv9Sx1.yTJw.',
-    cep: this.cep,
-    logradouro: this.logradouro,
-    bairro: this.bairro,
-    cidade: this.cidade,
-    estado: this.estado
-  };
-
-  this.usuarioService.cadastrar(novoUsuario).subscribe({
-    next: () => {
-
-      // 🔥 mostra sucesso primeiro
-      this.mensagem = 'Cadastro realizado com sucesso! Redirecionando para login...';
-
-      // limpa erro
-      this.erro = '';
-
-      // ⏳ espera usuário ver a mensagem
-      setTimeout(() => {
-        this.router.navigate(['/login']);
-      }, 3500);
-
-    },
-    error: (err) => {
-      this.erro = err.error?.message || 'Erro ao cadastrar usuário';
-      this.mensagem = '';
+    if (!this.nome || !this.email || !this.cep) {
+      this.erro = 'Preencha todos os campos obrigatórios.';
+      return;
     }
-  });
 
-  
-}
+    this.carregando = true;
+    this.erro = '';
+    this.mensagem = '';
 
+    const novoUsuario = {
+      nome: this.nome,
+      email: this.email,
+      senha: this.senhaTeste, // 🔥 senha fixa para testes
+      cep: this.cep,
+      logradouro: this.logradouro,
+      bairro: this.bairro,
+      cidade: this.cidade,
+      estado: this.estado
+    };
 
+    this.usuarioService.cadastrar(novoUsuario).subscribe({
+      next: () => {
 
+        this.mensagem = 'Cadastro realizado com sucesso! Redirecionando para login...';
+
+        this.carregando = false;
+
+        setTimeout(() => {
+          this.router.navigate(['/login']);
+        }, 2500);
+
+      },
+      error: (err) => {
+        this.erro = err.error?.message || 'Erro ao cadastrar usuário';
+        this.carregando = false;
+      }
+    });
+  }
 }

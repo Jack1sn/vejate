@@ -1,118 +1,154 @@
 import { Component, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 
 import { RecargaService } from '../../services/recarga.service';
-import { AuthService } from '../../services/auth.service';
+import { UsuarioService, Usuario } from '../../services/usuario.service';
 import { Recarga } from '../../models/recarga.model';
-import { UsuarioService } from '../../services/usuario.service';
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './admin-dashboard.html'
 })
 export class AdminDashboardComponent {
 
   private recargaService = inject(RecargaService);
-  private auth = inject(AuthService);
+  private usuarioService = inject(UsuarioService);
 
-  // ================= STATE (API) =================
+  // ================= STATE =================
   recargas = signal<Recarga[]>([]);
-  usuarioService: any;
+  usuarios = signal<Usuario[]>([]);
+
+  valoresSaldo = signal<Record<string, number>>({});
 
   constructor() {
-    this.carregar();
+    this.carregarRecargas();
+    this.carregarUsuarios();
   }
 
-  carregar() {
+  // ================= LOAD =================
+  carregarRecargas() {
     this.recargaService.listar().subscribe({
       next: (data) => this.recargas.set(data),
-      error: (err) => console.error('Erro ao carregar recargas', err)
+      error: (err) => console.error('Erro recargas', err)
+    });
+  }
+
+  carregarUsuarios() {
+    this.usuarioService.listar().subscribe({
+      next: (data) => {
+        this.usuarios.set(
+          data.map(u => ({
+            ...u,
+            saldo: Number(u.saldo ?? 0)
+          }))
+        );
+      },
+      error: (err) => console.error('Erro usuarios', err)
     });
   }
 
   // ================= FILTROS =================
-  filtro: 'todos' | 'pendente' | 'aprovado' | 'rejeitado' = 'todos';
+  filtro: 'todos' | 'PENDENTE' | 'APROVADO' | 'REJEITADO' = 'todos';
   filtroTexto = '';
-  filtroData: string = '';
+  filtroData = '';
 
-  // ================= PAGINAÇÃO =================
-  pagina = 1;
-  porPagina = 5;
-
-  valoresSaldo: { [email: string]: number } = {};
-
-  // ================= LISTA FILTRADA =================
   listaFiltrada = computed(() => {
     let data = this.recargas();
 
-    // status
+    // 🔥 STATUS (CORRETO COM BACKEND)
     if (this.filtro !== 'todos') {
-      data = data.filter((r: Recarga) => r.status === this.filtro);
+      data = data.filter(r => r.status === this.filtro);
     }
 
-    // texto
+    // 🔍 TEXTO
     const termo = this.filtroTexto.toLowerCase().trim();
     if (termo) {
-      data = data.filter((r: Recarga) =>
+      data = data.filter(r =>
         (r.nome ?? '').toLowerCase().includes(termo) ||
         (r.email ?? '').toLowerCase().includes(termo)
       );
     }
 
-    // data
+    // 📅 DATA
     if (this.filtroData) {
-      data = data.filter((r: Recarga) => {
-        const dataRecarga = new Date(r.data).toISOString().split('T')[0];
-        return dataRecarga === this.filtroData;
-      });
+      data = data.filter(r =>
+        new Date(r.data).toISOString().split('T')[0] === this.filtroData
+      );
     }
 
     return data;
   });
 
   // ================= PAGINAÇÃO =================
+  pagina = signal(1);
+  porPagina = 5;
+
   totalPaginas = computed(() =>
-    Math.ceil(this.listaFiltrada().length / this.porPagina)
+    Math.max(1, Math.ceil(this.listaFiltrada().length / this.porPagina))
+  );
+
+  paginas = computed(() =>
+    Array.from({ length: this.totalPaginas() }, (_, i) => i + 1)
   );
 
   listaPaginada = computed(() => {
-    const start = (this.pagina - 1) * this.porPagina;
+    const page = this.pagina();
+    const start = (page - 1) * this.porPagina;
     return this.listaFiltrada().slice(start, start + this.porPagina);
   });
 
   mudarPagina(p: number) {
-    this.pagina = p;
+    this.pagina.set(p);
   }
 
-  // ================= AÇÕES BACKEND =================
-  aprovar(id: string) {
-    this.recargaService.aprovarRecarga(id).subscribe({
-      next: () => this.carregar()
+  // ================= RECARGA =================
+alterarStatus(
+  id: string,
+  status: 'PENDENTE' | 'APROVADO' | 'REJEITADO'
+) {
+  this.recargaService.alterarStatus(id, status)
+    .subscribe({
+      next: () => {
+        this.carregarRecargas();
+        this.carregarUsuarios();
+      },
+      error: (err) => console.error(err)
     });
-  }
-
-  rejeitar(id: string) {
-    this.recargaService.rejeitarRecarga(id).subscribe({
-      next: () => this.carregar()
-    });
-  }
-
-  adicionarSaldo(email: string) {
-    const valor = this.valoresSaldo[email] ?? 0;
-    if (valor <= 0) return;
-
-   this.usuarioService.adicionarSaldo(email, valor).subscribe();
-    this.valoresSaldo[email] = 0;
-  }
+}
 
   // ================= SALDO =================
-  getSaldo(email: string): number {
-    const usuarios = JSON.parse(localStorage.getItem('vejate_users') || '[]');
-    const user = usuarios.find((u: any) => u.email === email);
+  getSaldo(id: string): number {
+    return this.usuarios().find(u => u.id === id)?.saldo ?? 0;
+  }
 
-    return user?.saldo ?? 0;
+  atualizarSaldoTemp(id: string, valor: number) {
+    this.valoresSaldo.set({
+      ...this.valoresSaldo(),
+      [id]: Number(valor)
+    });
+  }
+
+  adicionarSaldo(id: string) {
+
+    const valor = Number(this.valoresSaldo()[id] ?? 0);
+
+    if (!valor || valor <= 0) return;
+
+    this.usuarioService.adicionarSaldo(id, valor).subscribe({
+      next: () => {
+
+        this.valoresSaldo.set({
+          ...this.valoresSaldo(),
+          [id]: 0
+        });
+
+        this.carregarUsuarios();
+      },
+      error: (err) => console.error('Erro ao adicionar saldo', err)
+    });
   }
 }

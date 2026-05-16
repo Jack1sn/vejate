@@ -1,14 +1,14 @@
 import { Injectable, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs';
-import { Observable } from 'rxjs';
 
 export interface Usuario {
-  id?: string;
-  nome: string;
-  email: string;
-  role: 'ADMIN' | 'CLIENTE' | string;
+  id: string;
+  nome?: string;
+  email?: string;
+  role: 'ADMIN' | 'CLIENTE';
   saldo: number;
+  token?: string;
 }
 
 @Injectable({
@@ -23,7 +23,6 @@ export class AuthService {
   usuario = computed(() => this.usuarioSignal());
   estaLogado = computed(() => !!this.usuarioSignal());
   ehAdmin = computed(() => this.usuarioSignal()?.role === 'ADMIN');
-  nomeUsuario = computed(() => this.usuarioSignal());
 
   constructor(private http: HttpClient) {
     const saved = localStorage.getItem('user');
@@ -32,76 +31,51 @@ export class AuthService {
     }
   }
 
-  // ================= LOGIN =================
-  login(email: string, senha: string) {
-    return this.http.post<Usuario>(
-      `${this.API}/auth/login`,
-      { email, senha }
-    ).pipe(
-      tap(user => {
-        this.usuarioSignal.set(user);
-        localStorage.setItem('user', JSON.stringify(user));
+  
+
+login(email: string, senha: string) {
+  return this.http.post<any>(`${this.API}/auth/login`, { email, senha })
+    .pipe(
+      tap(res => {
+
+        console.log("LOGIN RESPONSE:", res);
+
+        const token = res.token;
+        const user = res.usuario;
+
+        // 🚨 validação forte
+        if (!token) {
+          console.error("TOKEN NÃO VEIO");
+          throw new Error("Token não recebido do backend");
+        }
+
+        // 🔥 salva token
+        localStorage.setItem('token', token);
+
+        const cleanUser = { ...user, id: String(user.id).trim() };
+
+        this.usuarioSignal.set(cleanUser);
+        localStorage.setItem('user', JSON.stringify(cleanUser));
+
+        console.log("TOKEN SALVO:", token);
       })
     );
-  }
-
-  // ================= LOGOUT =================
+}
   logout() {
     this.usuarioSignal.set(null);
-    localStorage.removeItem('user');
+    localStorage.clear();
   }
 
-  // ================= GET =================
   getUsuario(): Usuario | null {
     return this.usuarioSignal();
   }
 
-  // ================= SALDO (BACKEND) =================
-
-  // ➕ adicionar saldo (admin)
-  adicionarSaldoUsuario(email: string, valor: number): Observable<Usuario> {
-    return this.http.put<Usuario>(
-      `${this.API}/usuarios/saldo`,
-      { email, valor }
-    ).pipe(
-      tap(userAtualizado => {
-        // atualiza local se for o mesmo usuário logado
-        const atual = this.usuarioSignal();
-        if (atual?.email === email) {
-          this.usuarioSignal.set(userAtualizado);
-          localStorage.setItem('user', JSON.stringify(userAtualizado));
-        }
-      })
-    );
-  }
-
-  // 🔄 atualizar usuário do backend (sync)
-  atualizarUsuario(): Observable<Usuario> {
+  // 🔥 NOVO MÉTODO: atualizar saldo do usuário
+  atualizarSaldo(novoSaldo: number) {
     const user = this.usuarioSignal();
-    if (!user?.email) throw new Error('Usuário não logado');
-
-    return this.http.get<Usuario>(
-      `${this.API}/usuarios/email/${user.email}`
-    ).pipe(
-      tap(u => {
-        this.usuarioSignal.set(u);
-        localStorage.setItem('user', JSON.stringify(u));
-      })
-    );
+    if (!user) return;
+    const atualizado = { ...user, saldo: novoSaldo };
+    this.usuarioSignal.set(atualizado);
+    localStorage.setItem('user', JSON.stringify(atualizado));
   }
-
-  // 🔥 atualização imediata do saldo (tempo real)
-atualizarSaldo(novoSaldo: number) {
-  const user = this.usuarioSignal();
-
-  if (!user) return;
-
-  const atualizado: Usuario = {
-    ...user,
-    saldo: novoSaldo
-  };
-
-  this.usuarioSignal.set(atualizado);
-  localStorage.setItem('user', JSON.stringify(atualizado));
-}
 }

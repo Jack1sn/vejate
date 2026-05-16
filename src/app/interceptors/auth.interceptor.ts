@@ -7,34 +7,46 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   const router = inject(Router);
 
-  // 🔑 pega token
+  const isLoginRequest = req.url.includes('/auth/login') || req.url.includes('/usuarios/registrar');
+
   const token = localStorage.getItem('token');
 
-  // 🔐 adiciona Authorization automaticamente
-  if (token) {
-    req = req.clone({
+  console.log('📌 INTERCEPTOR URL:', req.url);
+  console.log('📌 TOKEN:', token);
+
+  // 🔥 SEMPRE clonar de forma segura
+  let authReq = req;
+
+  if (token && !isLoginRequest) {
+    authReq = req.clone({
       setHeaders: {
         Authorization: `Bearer ${token}`
       }
     });
   }
 
-  return next(req).pipe(
+  return next(authReq).pipe(
 
-    // 🚨 tratamento global de erro
     catchError((error: HttpErrorResponse) => {
 
-      // 🔥 se token inválido/expirado
-      if (error.status === 401) {
+      console.log('❌ HTTP ERROR:', error.status, error.url);
 
-        console.warn('Sessão expirada. Fazendo logout...');
+      // 🚫 não interceptar login
+      if (isLoginRequest) {
+        return throwError(() => error);
+      }
 
-        // limpa dados
+      // 🔐 token inválido ou expirado
+      if (error.status === 401 || error.status === 403) {
+
+        console.warn('🔒 Token inválido ou sem permissão');
+
         localStorage.removeItem('token');
         localStorage.removeItem('user');
 
-        // redireciona login
-        router.navigate(['/login']);
+        if (router.url !== '/login') {
+          router.navigate(['/login']);
+        }
       }
 
       return throwError(() => error);

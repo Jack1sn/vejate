@@ -8,74 +8,96 @@ import { Recarga } from '../models/recarga.model';
 })
 export class RecargaService {
 
-  private readonly API = 'http://localhost:8080/api/recarga';
+  private API = 'http://localhost:8080/api/recarga';
 
   constructor(private http: HttpClient) {}
 
-  // 🔐 headers com JWT
+  // =========================
+  // 🔐 PEGAR TOKEN DO LOCALSTORAGE
+  // =========================
+  private getToken(): string | null {
+
+    const user = localStorage.getItem('user');
+
+    if (!user) return null;
+
+    try {
+      return JSON.parse(user)?.token ?? null;
+    } catch (e) {
+      console.error('Erro ao ler user do localStorage', e);
+      return null;
+    }
+  }
+
+  // =========================
+  // 🔐 HEADERS COM JWT
+  // =========================
   private getAuthHeaders(): HttpHeaders {
 
-    const token = localStorage.getItem('token');
+    const token = this.getToken();
 
-    if (!token) {
-      console.warn('⚠️ Token não encontrado no localStorage');
+    console.log('🔐 TOKEN ENVIADO:', token);
 
-      return new HttpHeaders({
-        'Content-Type': 'application/json'
-      });
+    let headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+
+    if (token) {
+      headers = headers.set('Authorization', `Bearer ${token}`);
     }
 
-    return new HttpHeaders({
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`
-    });
+    return headers;
   }
 
-  // 💳 CRIAR RECARGA (CORRIGIDO)
-  solicitarRecarga(valor: number): Observable<Recarga> {
+  // =========================
+  // 💰 CRIAR RECARGA (SEM usuarioId)
+  // =========================
+solicitarRecarga(body: {
+  numero: string;
+  valor: number;
+  moeda: string;
+  origem: string;
+  comprovante?: string | null;
+}): Observable<Recarga> {
 
-    return this.http.post<Recarga>(
-      this.API,
-      { valor }, // 🔥 backend pega email do token
-      { headers: this.getAuthHeaders() }
-    );
-  }
+  const payload = {
+    ...body
+  };
 
-  // 📊 LISTAR TODAS
+  console.log('📤 ENVIANDO RECARGA:', payload);
+
+  return this.http.post<Recarga>(
+    this.API,
+    payload,
+    { headers: this.getAuthHeaders() }
+  );
+}
+
+  // =========================
+  // 📋 LISTAR RECARGAS
+  // =========================
   listar(): Observable<Recarga[]> {
-
     return this.http.get<Recarga[]>(
       this.API,
       { headers: this.getAuthHeaders() }
     );
   }
 
-  // 📊 FILTRAR POR STATUS
-  listarPorStatus(status: string): Observable<Recarga[]> {
+  // =========================
+  // ✅ APROVAR RECARGA ...
+  // =========================
+  alterarStatus(
+  id: string,
+  status: 'PENDENTE' | 'APROVADO' | 'REJEITADO'
+): Observable<Recarga> {
 
-    return this.http.get<Recarga[]>(
-      `${this.API}?status=${status}`,
-      { headers: this.getAuthHeaders() }
-    );
-  }
+  return this.http.put<Recarga>(
+    `${this.API}/${id}/status`,
+    { status },
+    { headers: this.getAuthHeaders() }
+  );
+}
 
-  // ✅ APROVAR
-  aprovarRecarga(id: string): Observable<Recarga> {
 
-    return this.http.put<Recarga>(
-      `${this.API}/${id}/aprovar`,
-      {},
-      { headers: this.getAuthHeaders() }
-    );
-  }
-
-  // ❌ REJEITAR
-  rejeitarRecarga(id: string): Observable<Recarga> {
-
-    return this.http.put<Recarga>(
-      `${this.API}/${id}/rejeitar`,
-      {},
-      { headers: this.getAuthHeaders() }
-    );
-  }
+  
 }
