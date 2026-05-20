@@ -94,6 +94,8 @@ export class HistoricoRecargasComponent implements OnInit, OnDestroy {
     this.recargasFiltradas = lista.sort(
       (a, b) => new Date(b.data).getTime() - new Date(a.data).getTime()
     );
+
+    
   }
 
   // =========================
@@ -179,4 +181,54 @@ imprimirRecarga(r: Recarga) {
       window.open(url, '_blank');
     }
   }
+    // =========================
+  // PAGINAÇÃO
+  // =========================
+
+  paginaAtual = 1;
+  porPagina = 3;
+
+  get totalPaginas(): number {
+    return Math.ceil(this.recargasFiltradas.length / this.porPagina);
+  }
+
+  listaPaginada(): Recarga[] {
+
+    const inicio = (this.paginaAtual - 1) * this.porPagina;
+
+    return this.recargasFiltradas.slice(
+      inicio,
+      inicio + this.porPagina
+    );
+  }
+
+  mudarPagina(p: number) {
+    this.paginaAtual = p;
+  }
+
+  paginas(): number[] {
+    return Array.from(
+      { length: this.totalPaginas },
+      (_, i) => i + 1
+    );
+  }
+
+toggleChequeo(r: Recarga, event: Event) {
+
+  const checked = (event.target as HTMLInputElement).checked;
+
+  r.chequeo = checked;
+
+  this.recargaService.atualizarChequeo(r.id, checked)
+    .subscribe({
+      next: (res) => {
+        r.chequeo = res.chequeo;
+      },
+      error: (err) => {
+        console.error(err);
+        r.chequeo = !checked;
+      }
+    });
+}
+  
 }

@@ -97,10 +97,10 @@ export class UsuarioService {
   // =========================
   // 💰 ADICIONAR SALDO (COM TOKEN)
   // =========================
-  adicionarSaldo(usuarioId: string, valor: number): Observable<Usuario> {
+  adicionarSaldo(id: string, valor: number): Observable<Usuario> {
     return this.http.put<Usuario>(
-      `${this.API}/${usuarioId}/saldo`,
-      { valor },
+      `${this.API}/${id}/saldo`,
+       valor ,
       { headers: this.getAuthHeaders() }
     );
   }

@@ -5,7 +5,59 @@
     📊 Dashboard Administrativo
   </h1>
 
-  <!-- ================= FILTROS ================= -->
+  <!-- ================= BUSCA USUÁRIO (SALDO) ================= -->
+  <div class="mb-6 p-4 border rounded-lg bg-gray-50">
+
+    <h2 class="text-sm font-medium mb-3">
+      💰 Adicionar saldo ao usuário
+    </h2>
+
+    <input
+      type="text"
+      [(ngModel)]="buscaEmail"
+      (ngModelChange)="filtrarUsuarios()"
+      placeholder="Digite o email do cliente"
+      class="border px-3 py-2 rounded text-sm w-full mb-2"
+    />
+
+    <!-- LISTA FILTRADA -->
+    <div *ngIf="usuariosFiltrados.length > 0" class="border rounded bg-white mb-3">
+
+      <div
+        *ngFor="let u of usuariosFiltrados"
+        (click)="selecionarUsuario(u)"
+        class="p-2 hover:bg-gray-100 cursor-pointer text-sm"
+      >
+        📧 {{ u.email }} - {{ u.nome }}
+      </div>
+
+    </div>
+
+    <!-- SELECIONADO -->
+    <div *ngIf="usuarioSelecionado as u" class="text-sm mb-3">
+      ✔️ Selecionado: {{ u.email }}
+    </div>
+
+    <!-- INPUT SALDO -->
+    <input
+      type="number"
+      [(ngModel)]="valoresSaldo()[usuarioSelecionado?.id || '']"
+      (ngModelChange)="atualizarSaldoTemp(usuarioSelecionado?.id || '', $event)"
+      placeholder="Valor do saldo"
+      class="border px-3 py-2 rounded text-sm w-full mb-3"
+    />
+
+    <!-- BOTÃO SALDO -->
+    <button
+      (click)="usuarioSelecionado && adicionarSaldo(usuarioSelecionado.id)"
+      class="bg-blue-600 text-white px-3 py-2 rounded hover:bg-blue-700 transition text-sm w-full"
+    >
+      + Saldo
+    </button>
+
+  </div>
+
+  <!-- ================= FILTROS RECARGA ================= -->
   <div class="grid md:grid-cols-4 gap-3 mb-6">
 
     <input
@@ -14,11 +66,14 @@
       class="border px-3 py-2 rounded text-sm"
     />
 
-    <select [(ngModel)]="filtro" class="border px-3 py-2 rounded text-sm">
+    <select
+      [(ngModel)]="filtro"
+      class="border px-3 py-2 rounded text-sm"
+    >
       <option value="todos">Todos</option>
-      <option value="pendente">Pendentes</option>
-      <option value="aprovado">Aprovados</option>
-      <option value="rejeitado">Rejeitados</option>
+      <option value="PENDENTE">Pendentes</option>
+      <option value="APROVADO">Aprovados</option>
+      <option value="REJEITADO">Rejeitados</option>
     </select>
 
     <input
@@ -36,24 +91,22 @@
 
   </div>
 
-  <!-- ================= LISTA ================= -->
+  <!-- ================= LISTA RECARGAS ================= -->
   <div class="space-y-4">
 
-    <div *ngFor="let r of listaPaginada()"
-         class="border rounded-lg p-4 flex flex-col md:flex-row md:justify-between gap-4">
+    <div
+      *ngFor="let r of listaPaginada()"
+      class="border rounded-lg p-4 flex flex-col md:flex-row md:justify-between gap-4"
+    >
 
-      <!-- ================= INFO ================= -->
+      <!-- INFO -->
       <div class="space-y-1 font-light">
 
         <p class="font-medium">📧 {{ r.email }}</p>
+        <p class="text-sm text-gray-600">👤 {{ r.nome }}</p>
 
         <p class="text-sm text-gray-600">
-          👤 {{ r.nome }}
-        </p>
-
-        <!-- ✅ AGORA USA saldo direto -->
-        <p class="text-sm text-gray-600">
-          💰 Saldo atual: R$ {{ r.saldo ?? 0 }}
+          💰 Saldo atual: R$ {{ getSaldo(r.id) }}
         </p>
 
         <p>💸 Valor recarga: R$ {{ r.valor }}</p>
@@ -62,61 +115,47 @@
           📅 {{ r.data | date:'short' }}
         </p>
 
-        <p class="text-sm">
-          Status:
-          <span [ngClass]="{
-            'text-yellow-500': r.status === 'PENDENTE',
-            'text-green-600': r.status === 'APROVADO',
-            'text-red-500': r.status === 'REJEITADO'
-          }">
+        <!-- STATUS -->
+        <div class="text-sm pt-1">
+
+          <span class="font-medium">Status:</span>
+
+          <span
+            class="font-semibold"
+            [ngClass]="{
+              'text-yellow-500': r.status === 'PENDENTE',
+              'text-green-600': r.status === 'APROVADO',
+              'text-red-500': r.status === 'REJEITADO'
+            }"
+          >
             {{ r.status }}
           </span>
-        </p>
-
-      </div>
-
-      <!-- ================= AÇÕES ================= -->
-      <div class="flex flex-col gap-3 items-end">
-
-        <!-- BOTÕES -->
-        <div *ngIf="r.status === 'PENDENTE'" class="flex gap-2">
-
-          <!-- ✅ continua usando ID da recarga -->
-          <button
-          (click)="alterarStatus(r.id, 'APROVADO')"
-            class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 transition text-sm"
-          >
-            Aprovar
-          </button>
 
           <button
-           (click)="alterarStatus(r.id, 'REJEITADO')"
-            class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition text-sm"
+            (click)="toggleMenuStatus(r.id)"
+            class="ml-2 text-blue-600 hover:underline text-xs"
           >
-            Rejeitar
+            Atualizar status
           </button>
 
-        </div>
+          <div *ngIf="menuStatusAberto === r.id" class="mt-3 flex gap-2 flex-wrap">
 
-        <!-- ================= SALDO ================= -->
-        <div class="flex gap-2 items-center">
+            <button (click)="alterarStatus($event, r.id, 'APROVADO')"
+              class="bg-green-600 text-white px-3 py-1 rounded text-xs">
+              APROVAR
+            </button>
 
-          <!-- ✅ AGORA CHAVE É usuarioId -->
-          <input
-            type="number"
-            [ngModel]="valoresSaldo()[r.usuarioId]"
-            (ngModelChange)="atualizarSaldoTemp(r.usuarioId, $event)"
-            placeholder="Saldo"
-            class="border px-2 py-1 w-24 rounded text-sm"
-          />
+            <button (click)="alterarStatus($event, r.id, 'PENDENTE')"
+              class="bg-yellow-500 text-white px-3 py-1 rounded text-xs">
+              PENDENTE
+            </button>
 
-          <!-- 🔥 AQUI ESTAVA O BUG PRINCIPAL -->
-          <button
-            (click)="adicionarSaldo(r.usuarioId)"
-            class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition text-sm"
-          >
-            + Saldo
-          </button>
+            <button (click)="alterarStatus($event, r.id, 'REJEITADO')"
+              class="bg-red-600 text-white px-3 py-1 rounded text-xs">
+              REJEITAR
+            </button>
+
+          </div>
 
         </div>
 
@@ -133,9 +172,7 @@
       *ngFor="let p of paginas()"
       (click)="mudarPagina(p)"
       class="px-3 py-1 border rounded text-sm"
-      [ngClass]="{
-        'bg-green-600 text-white': pagina() === p
-      }"
+      [ngClass]="{ 'bg-green-600 text-white': pagina() === p }"
     >
       {{ p }}
     </button>

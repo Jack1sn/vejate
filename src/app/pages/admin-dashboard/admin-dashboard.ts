@@ -23,6 +23,19 @@ export class AdminDashboardComponent {
   usuarios = signal<Usuario[]>([]);
 
   valoresSaldo = signal<Record<string, number>>({});
+  usuarioSelecionado: Usuario | null = null;
+  
+  buscaEmail: string = '';
+  usuariosFiltrados: any[] = [];
+  
+
+
+
+
+
+
+  // ✅ MENU STATUS
+  menuStatusAberto: string | null = null;
 
   constructor() {
     this.carregarRecargas();
@@ -53,19 +66,22 @@ export class AdminDashboardComponent {
 
   // ================= FILTROS =================
   filtro: 'todos' | 'PENDENTE' | 'APROVADO' | 'REJEITADO' = 'todos';
+
   filtroTexto = '';
   filtroData = '';
 
   listaFiltrada = computed(() => {
+
     let data = this.recargas();
 
-    // 🔥 STATUS (CORRETO COM BACKEND)
+    // STATUS
     if (this.filtro !== 'todos') {
       data = data.filter(r => r.status === this.filtro);
     }
 
-    // 🔍 TEXTO
+    // TEXTO
     const termo = this.filtroTexto.toLowerCase().trim();
+
     if (termo) {
       data = data.filter(r =>
         (r.nome ?? '').toLowerCase().includes(termo) ||
@@ -73,7 +89,7 @@ export class AdminDashboardComponent {
       );
     }
 
-    // 📅 DATA
+    // DATA
     if (this.filtroData) {
       data = data.filter(r =>
         new Date(r.data).toISOString().split('T')[0] === this.filtroData
@@ -85,70 +101,133 @@ export class AdminDashboardComponent {
 
   // ================= PAGINAÇÃO =================
   pagina = signal(1);
+
   porPagina = 5;
 
   totalPaginas = computed(() =>
-    Math.max(1, Math.ceil(this.listaFiltrada().length / this.porPagina))
+    Math.max(
+      1,
+      Math.ceil(this.listaFiltrada().length / this.porPagina)
+    )
   );
 
   paginas = computed(() =>
-    Array.from({ length: this.totalPaginas() }, (_, i) => i + 1)
+    Array.from(
+      { length: this.totalPaginas() },
+      (_, i) => i + 1
+    )
   );
 
   listaPaginada = computed(() => {
+
     const page = this.pagina();
+
     const start = (page - 1) * this.porPagina;
-    return this.listaFiltrada().slice(start, start + this.porPagina);
+
+    return this.listaFiltrada().slice(
+      start,
+      start + this.porPagina
+    );
   });
 
   mudarPagina(p: number) {
     this.pagina.set(p);
   }
 
+  // ================= MENU STATUS =================
+  toggleMenuStatus(id: string) {
+
+    this.menuStatusAberto =
+      this.menuStatusAberto === id
+        ? null
+        : id;
+  }
+
   // ================= RECARGA =================
-alterarStatus(
+ alterarStatus(
+  event: Event,
   id: string,
-  status: 'PENDENTE' | 'APROVADO' | 'REJEITADO'
+  novoStatus: 'PENDENTE' | 'APROVADO' | 'REJEITADO'
 ) {
-  this.recargaService.alterarStatus(id, status)
+
+  event.preventDefault();
+
+  this.recargaService
+    .alterarStatus(id, novoStatus)
     .subscribe({
+
       next: () => {
+
+        // fecha menu
+        this.menuStatusAberto = null;
+
+        // recarrega dados
         this.carregarRecargas();
+
         this.carregarUsuarios();
       },
-      error: (err) => console.error(err)
+
+      error: (err) => {
+
+        console.error(
+          'Erro alterar status',
+          err
+        );
+      }
     });
 }
 
   // ================= SALDO =================
   getSaldo(id: string): number {
-    return this.usuarios().find(u => u.id === id)?.saldo ?? 0;
+    return this.usuarios()
+      .find(u => u.id === id)?.saldo ?? 0;
   }
 
   atualizarSaldoTemp(id: string, valor: number) {
+
     this.valoresSaldo.set({
       ...this.valoresSaldo(),
       [id]: Number(valor)
     });
   }
 
-  adicionarSaldo(id: string) {
+ adicionarSaldo(id: string) {
 
-    const valor = Number(this.valoresSaldo()[id] ?? 0);
+  const valor = Number(this.valoresSaldo()[id] ?? 0);
 
-    if (!valor || valor <= 0) return;
+  if (!valor || valor <= 0) return;
 
-    this.usuarioService.adicionarSaldo(id, valor).subscribe({
-      next: () => {
+  this.usuarioService.adicionarSaldo(id, valor).subscribe({
+    next: () => {
 
-        this.valoresSaldo.set({
-          ...this.valoresSaldo(),
-          [id]: 0
-        });
+      // reseta apenas o valor daquele usuário
+      this.valoresSaldo.set({
+        ...this.valoresSaldo(),
+        [id]: 0
+      });
 
-        this.carregarUsuarios();
-      },
-      error: (err) => console.error('Erro ao adicionar saldo', err)
-    });
-  }
+      this.carregarUsuarios();
+    },
+
+    error: (err) =>
+      console.error('Erro ao adicionar saldo', err)
+  });
+}
+
+filtrarUsuarios() {
+  const termo = (this.buscaEmail ?? '').toLowerCase();
+
+  const usuarios = this.usuarios?.() ?? [];
+
+  this.usuariosFiltrados = usuarios.filter(u =>
+    (u.email ?? '').toLowerCase().includes(termo)
+  );
+}
+selecionarUsuario(usuario: any) {
+  this.usuarioSelecionado = usuario;
+  this.usuariosFiltrados = [];
+  this.buscaEmail = usuario.email;
+}
+
+
 }

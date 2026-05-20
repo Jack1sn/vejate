@@ -97,7 +97,17 @@ solicitarRecarga(body: {
     { headers: this.getAuthHeaders() }
   );
 }
+  // =========================
+  // ✅ ATUALIZAR CHEQUEO (ADMIN)
+  // =========================
+  atualizarChequeo(id: string, chequeo: boolean): Observable<Recarga> {
 
+    return this.http.patch<Recarga>(
+      `${this.API}/${id}/chequeo`,
+      { chequeo },
+      { headers: this.getAuthHeaders() }
+    );
+  }
 
   
 }

@@ -29,6 +29,7 @@ export interface Recarga {
   // AUDITORIA DE SALDO
   // =========================
   saldo?: number;
+  chequeo:boolean;
   
 
   // =========================

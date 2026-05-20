@@ -46,6 +46,8 @@
       Rejeitados
     </button>
 
+    
+
   </div>
 
   <!-- ADMIN FILTRO -->
@@ -66,8 +68,8 @@
   </div>
 
   <!-- LISTA -->
-  <div *ngFor="let r of recargasFiltradas; trackBy: trackById"
-       class="border rounded-lg p-4 mb-3 bg-white shadow-sm">
+ <div *ngFor="let r of listaPaginada(); trackBy: trackById"
+     class="border rounded-lg p-4 mb-3 bg-white shadow-sm">
 
     <!-- TOPO -->
     <div class="flex justify-between items-center">
@@ -94,6 +96,16 @@
       <div>📅 {{ r.data | date:'short' }}</div>
     </div>
 
+      <!-- ADMIN CHECKBOX -->
+    <div *ngIf="isAdmin" class="mt-2 flex items-center gap-2">
+      <input
+        type="checkbox"
+        [checked]="r.chequeo"
+        (change)="toggleChequeo(r, $event)"
+      />
+      <span class="text-xs text-gray-600">Revisado</span>
+    </div>
+
     <!-- AÇÕES -->
     <div class="flex gap-2 mt-3">
 
@@ -115,8 +127,24 @@
         Compartilhar
       </button>
 
+
     </div>
 
+
   </div>
+  <div class="flex gap-2 justify-center mt-4">
+
+  <button
+    *ngFor="let p of paginas()"
+    (click)="mudarPagina(p)"
+    class="px-3 py-1 border rounded"
+    [ngClass]="{
+      'bg-blue-600 text-white': paginaAtual === p
+    }"
+  >
+    {{ p }}
+  </button>
+
+</div>
 
 </div>
